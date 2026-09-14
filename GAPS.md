@@ -26,11 +26,11 @@ prompts says nothing about snapshotting before a change or rolling one back. Hig
 gap on this list: it's the safety net for everything else the skill does.
 
 **Same-turn tool constraints** — [undocumented] · Production prompts carry rules like
-`"Do not output any assistant message in the same turn as the transfer_call tool"` and
 `"Do not invoke end_call in the same turn as webhook_dispatcher"`. These read as
-platform-level execution constraints, not stylistic preferences, and getting them wrong
-produces a caller hearing the wrong thing at the moment of transfer. Currently learnable
-only by reading example 01.
+platform-level execution constraints, not stylistic preferences. The `transfer_call`
+counterpart — no assistant message in the same turn as the tool — is now covered by the
+"Transferring a call" convention in `SKILL.md`; the webhook one is still learnable only
+by reading example 01.
 
 **Custom output cannot see the prompt** — [undocumented] · A question's `instruction`
 runs against the transcription only — it has no access to the Intro or Voice Prompt.

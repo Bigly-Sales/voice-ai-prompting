@@ -164,6 +164,10 @@ Check every script against these. They are not stylistic.
 - Every `end_call` that says goodbye passes the line as its `end_sentence` parameter.
   A `say: "..."` followed by a bare tool call plays the tenant default sentence after
   it — two goodbyes. See Writing conventions.
+- Every `transfer_call` invocation is the `# Transfer` form from Writing conventions:
+  invoke, the no-message-in-this-turn instruction, then `transfer_number` and
+  `transfer_sentence` as parameters — never `Say the transfer_sentence, then invoke`,
+  which plays the sentence twice.
 - The NO path of `# Initial Ask Handling After Opening Sentence` is the two-attempt
   push rule from Standard Intro structure, selling script or not, with its final
   `proceed to` pointing at the section that actually follows.
@@ -236,6 +240,25 @@ said and keeps it under the script's control. Silent endings (voicemail, IVR, wr
 number) are the opposite case: invoke `end_call` with an empty `end_sentence` and no
 message, rather than leaving it unspecified and letting the default play. See
 `references/platform-mcp.md`.
+
+**Transferring a call.** Same principle: `transfer_number` and `transfer_sentence` are
+parameters of `transfer_call`, so the Intro's `# Transfer` section is the invocation,
+an explicit instruction to output nothing else in that turn, and the parameters:
+
+```text
+# Transfer
+
+Invoke the transfer_call tool. Do not output any assistant message in the same turn as the transfer_call tool. The only user-facing message should be the tool's transfer_sentence. Parameters:
+transfer_number: +17075550123
+transfer_sentence: "Great. I'm going to place you into our loan specialists' call queue. They should answer within a minute."
+```
+
+The instruction is not decoration. The tool speaks `transfer_sentence` itself, so any
+assistant message in the same turn is heard on top of it — typically the same sentence
+twice. That is exactly what a list of values followed by `Say the transfer_sentence,
+then invoke the transfer_call tool with transfer_number` produces. And no restated
+timing guard (`Do not transfer before Q1 has been answered`): the Voice Prompt's
+Transfer Rule already owns that.
 
 **Branch keywords in ALL CAPS** — YES, NO, EQUIVALENT INTENT. Makes decision logic
 scannable when reviewing a long script.
