@@ -3,9 +3,12 @@
 > **Real production script.** It predates parts of the current guide and may
 > contain conventions this guide now supersedes, as well as outright errors (note
 > the typo `end_sentece`, and `#Monthly Savings Calculation` referencing a section
-> actually named `#Savings Calculation`). Use it for shape and phrasing, not as a
-> rules reference. Only HTML escaping artifacts (`&lt;` → `<`) were corrected when
-> this was imported.
+> actually named `#Savings Calculation`). Its Voice Prompt also ends the wrong-number
+> and not-interested cases with a spoken goodbye followed by `end_call`, padded with
+> "wait until the sentence is fully spoken" — the guide now requires the goodbye to be
+> the `-end_sentence:` parameter, as this script's own Intro does. Use it for shape
+> and phrasing, not as a rules reference. Only HTML escaping artifacts (`&lt;` → `<`)
+> were corrected when this was imported.
 
 **Shape:** outbound → identity/scenario classification at pickup → interest confirm
 → 8-question qualification with a mid-flow savings calculation → bilingual live

@@ -143,8 +143,21 @@ out of the tool list entirely.
 
 `tenant_ai_tools_configuration` covers exactly two tools:
 
-- `end_call` — `description` (when to fire) and `default_sentence`.
+- `end_call` — `description` (when to fire), `default_sentence`, and the description of
+  its single runtime parameter, `end_sentence`.
 - `webhook_dispatcher` — `webhook_id`, `webhook_sentence`, and a description for each.
+
+`end_sentence` is the closing line the platform speaks before it hangs up. When the
+script leaves it unspecified, the tool falls back to `default_sentence` — the
+tenant-level default, `"Thank you for your time!"` on the tenant inspected. That
+fallback is why a goodbye written as `say: "..."` followed by a bare `end_call` is
+wrong even though it works: the caller hears the script's line and then the default
+one. The line belongs in `end_sentence` (see `SKILL.md`, Writing conventions). The
+shipped parameter description reads *"Sentence to be said when user wants to end the
+call. Should be empty if not specified explicitly."*, and the tool `description` lists
+the silent cases — wrong number, voicemail, IVR, profanity — as "invoke with empty
+end_sentence": for those, pass an empty sentence and no message rather than leaving it
+unspecified and letting the default play.
 
 `transfer_call` is **not** configurable here; its `transfer_number` and
 `transfer_sentence` live in the Intro body. Tenants may also reference other tools from

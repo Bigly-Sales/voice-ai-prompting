@@ -150,6 +150,9 @@ Check every script against these. They are not stylistic.
 - Every phone number is full U.S. E.164 with the `+1` prefix: `+17075550123`.
 - Every tool the flow needs is listed in the Voice Prompt. A transfer flow without
   `transfer_call` listed fails silently.
+- Every `end_call` that says goodbye passes the line as its `end_sentence` parameter.
+  A `say: "..."` followed by a bare tool call plays the tenant default sentence after
+  it — two goodbyes. See Writing conventions.
 - Scheduling scripts must **not** list `transfer_call` at all, and must state
   explicitly that transfers are not available. `prompt_type` must be
   `meeting_scheduler`, not `transfer_call` — the enum has to agree with the script.
@@ -192,11 +195,33 @@ Ask Q1: "{Q1}"
 (You must receive a YES/NO answer.)
 
 If YES or EQUIVALENT INTENT, proceed to Q2.
-If NO or EQUIVALENT INTENT, invoke the end_call tool.
+If NO or EQUIVALENT INTENT, invoke the end_call tool. Parameters:
+-end_sentence:"Totally understand. If anything changes, we're here to help. Have a great rest of your day."
 
 Ask Q2: "{Q2}"
 (You must receive a valid U.S. state.)
 ```
+
+**Ending a call.** The closing line goes in `end_call`'s `end_sentence` parameter, as
+in the example above — the platform speaks it and then hangs up. Never deliver it as a
+spoken message followed by the tool call:
+
+```text
+WRONG:
+If NO or EQUIVALENT INTENT, say: "No problem at all. Thanks for calling and have a great day." Then invoke the end_call tool.
+
+RIGHT:
+If NO or EQUIVALENT INTENT, invoke the end_call tool. Parameters:
+-end_sentence:"No problem at all. Thanks for calling and have a great day."
+```
+
+The wrong form still ends the call, but with no sentence specified the tool falls back
+to the tenant's `default_sentence`, so the caller hears the script's goodbye and then
+the generic default one. Putting the line in `end_sentence` makes it the last thing
+said and keeps it under the script's control. Silent endings (voicemail, IVR, wrong
+number) are the opposite case: invoke `end_call` with an empty `end_sentence` and no
+message, rather than leaving it unspecified and letting the default play. See
+`references/platform-mcp.md`.
 
 **Branch keywords in ALL CAPS** — YES, NO, EQUIVALENT INTENT. Makes decision logic
 scannable when reviewing a long script.
@@ -243,7 +268,9 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 
 - Complete all questions before any transfer or scheduling.
 - Distinguish a human gatekeeper / AI assistant from voicemail — they need
-  different handling. Voicemail and IVR should `end_call` without speaking.
+  different handling. Voicemail and IVR should `end_call` without speaking — an
+  empty `end_sentence` and no message, since an unspecified one plays the tenant
+  default.
 - Wait patiently when someone says they're fetching the person.
 - Never say "end_call" out loud or narrate that the call is ending.
 
