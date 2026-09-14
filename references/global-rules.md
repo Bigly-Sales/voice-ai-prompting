@@ -8,6 +8,13 @@ them verbatim and adjust only where the use case genuinely differs.
 The single most important guard. Without it, callers who say "just put me through"
 get transferred unqualified.
 
+It constrains `transfer_call`; it does not invoke it. The Voice Prompt never invokes
+`transfer_call` — the invocation, with its `transfer_number` and `transfer_sentence`,
+belongs in the Intro's `# Transfer` section only, because the Voice Prompt is shared by
+every Intro on the tenant, including the after-hours one. `end_call` is different: the
+Callback Rule and Language Rule below invoke it from the Voice Prompt, and that is
+correct.
+
 ```text
 # Transfer Rule (Priority)
 
@@ -66,7 +73,8 @@ and flag it for replacement, rather than omitting the section.
 ## Available Tools
 
 List every tool the flow needs. A missing tool means the action fails silently at
-runtime.
+runtime. Listing is not invoking — `transfer_call` is named here and invoked only in
+Intros (see Transfer Rule above).
 
 ```text
 # Available Tools

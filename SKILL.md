@@ -135,6 +135,15 @@ qualification questions, transfer logic, scheduling logic, branching, rebuttals.
 A rule that would be true on every call belongs in the Voice Prompt. If you find
 yourself pasting the same rule into three Intros, it was a Voice Prompt rule.
 
+The sharpest case of this split is `transfer_call`. The Voice Prompt *lists* the tool
+and *guards* it with the Transfer Rule — it never *invokes* it. Every invocation, with
+its `transfer_number` and `transfer_sentence`, lives in an Intro's `# Transfer` section:
+the destination and the moment to transfer belong to one conversation, while the Voice
+Prompt is shared by every Intro on the tenant, including the after-hours one — a Voice
+Prompt that transfers on "can I talk to a human" sends an after-hours caller to a
+closed call center. `end_call` is the contrast: global rules such as the Callback Rule
+and Language Rule invoke it from the Voice Prompt, and that is correct.
+
 ## Hard requirements
 
 Check every script against these. They are not stylistic.
@@ -150,6 +159,8 @@ Check every script against these. They are not stylistic.
 - Every phone number is full U.S. E.164 with the `+1` prefix: `+17075550123`.
 - Every tool the flow needs is listed in the Voice Prompt. A transfer flow without
   `transfer_call` listed fails silently.
+- `transfer_call` is listed in the Voice Prompt and invoked only in Intros. A Voice
+  Prompt that invokes it is wrong whatever the number — see The two layers.
 - Every `end_call` that says goodbye passes the line as its `end_sentence` parameter.
   A `say: "..."` followed by a bare tool call plays the tenant default sentence after
   it — two goodbyes. See Writing conventions.
@@ -274,7 +285,7 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 
 - **Transfer Rule (Priority)** — never transfer before every qualification question
   is answered, and never because the caller says "hold" / "connect" / "put me
-  through."
+  through." A guard on the tool, not an invocation of it — see The two layers.
 - **Callback Rule** — caller is busy, book a time within `{working_hours}`, never
   in the past, then `end_call`.
 - **User Questions** — answer, then return to the exact question you left. Never
