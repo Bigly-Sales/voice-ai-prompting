@@ -153,6 +153,9 @@ Check every script against these. They are not stylistic.
 - Every `end_call` that says goodbye passes the line as its `end_sentence` parameter.
   A `say: "..."` followed by a bare tool call plays the tenant default sentence after
   it — two goodbyes. See Writing conventions.
+- The NO path of `# Initial Ask Handling After Opening Sentence` is the two-attempt
+  push rule from Standard Intro structure, selling script or not, with its final
+  `proceed to` pointing at the section that actually follows.
 - Scheduling scripts must **not** list `transfer_call` at all, and must state
   explicitly that transfers are not available. `prompt_type` must be
   `meeting_scheduler`, not `transfer_call` — the enum has to agree with the script.
@@ -242,6 +245,22 @@ question — not an inline `Ask: "..."`.
 # FAQs                (optional)
 # Rebuttal            (optional)
 ```
+
+**Initial Ask Handling** branches on the caller's answer to the pitch. YES proceeds to
+the next section. NO is this push rule, on essentially every script — selling or not,
+the point is to keep the caller in the conversation long enough to qualify them or get
+the message across. It has proven itself in production:
+
+```text
+If NO or EQUIVALENT INTENT (not interested) gently push for a sale for a maximum of two times. If the caller still refuses after two attempts then invoke the end_call tool. Parameters:
+-end_sentence:"Thank you for your time, call us back if you change your mind!". If the caller accepts then immediately proceed to #Qualification Flow.
+```
+
+Point the final `proceed to` at whatever actually follows in that script —
+`#Qualification Flow`, `#Conversation`, `Q1` — and keep the cap: two attempts, then
+the call ends. On a script that isn't selling, `for a sale` becomes what the script
+actually wants, such as `to hear the message`. Only a use case that explicitly wants
+NO taken at face value goes without the push.
 
 **Rebuttal** handles objections that block the goal: why am I being called, general
 hesitancy, wanting information before answering, skepticism. Acknowledge, answer

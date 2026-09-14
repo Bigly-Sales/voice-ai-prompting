@@ -143,8 +143,9 @@ with the tenant's `end_call` tool description. No standard block exists in
 answers to gate qualification. Nothing covers where calculations belong or how to keep
 them out of TTS output.
 
-**Rebuttals** — [undocumented] · One paragraph in `SKILL.md`. No examples, and the
-"maximum two attempts" pattern from production isn't stated as a convention.
+**Rebuttals** — [undocumented] · One paragraph in `SKILL.md`. The two-attempt push on
+the opening NO is now a stated convention, but there is still no example of the
+rebuttal content itself — what the bot should actually say on each attempt.
 
 **`# User Personal Information`** — [undocumented] · The section is mandated but its
 contents aren't specified, and no list of injectable contact attributes exists.
