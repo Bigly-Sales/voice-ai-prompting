@@ -79,7 +79,7 @@ deliberate decision, not a default.
 | -------------------------- | --------------------------- | -------------- |
 | Provider                   | `turn_detection_provider`   | `livekit`      |
 | Language                   | `turn_detection_language`   | `english`      |
-| Interrupt Minimum Words    | `interrupt_min_words`       | 4              |
+| Interrupt Minimum Words    | `interrupt_min_words`       | 2              |
 | Interrupt Speech Duration  | `interrupt_speech_duration` | 0.5 seconds    |
 | Minimum End Pointing Delay | `min_end_pointing_delay`    | 0.80 seconds   |
 | Maximum End Pointing Delay | `max_end_pointing_delay`    | 3 seconds      |
