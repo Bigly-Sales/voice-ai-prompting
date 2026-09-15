@@ -42,6 +42,11 @@ Focus prompts on what is actually the LLM's job: reasoning, conversation flow,
 asking the right questions, following business logic, and generating appropriate
 responses. Everything else is a config change in the relevant component.
 
+When such an instruction is found in a prompt that already exists on the tenant, it is
+removed — not left alone as harmless. Dead text is clutter the model reads on every
+call, and its presence suggests to whoever edits the prompt next that the platform
+honors it. Delete it, note the removal, and move the intent to config if it had one.
+
 ## The reachable edge of an unreachable component
 
 The line falls around each component's *internals*, not around its input and output.

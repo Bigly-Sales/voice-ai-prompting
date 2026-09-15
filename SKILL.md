@@ -26,6 +26,16 @@ and **only** the LLM. Instructions aimed at the other three silently do nothing:
 So "wait two seconds before answering", "ignore background noise", and "speak in a
 soft, slow voice" are dead text. Fix those in the component config, not the prompt.
 
+**On an existing prompt, delete dead text on sight.** This is a requirement, not a
+suggestion. Whenever the skill reads, reviews, or edits a prompt that is already on the
+tenant and finds an instruction the LLM cannot act on — a timing rule, a noise rule, a
+voice or pacing rule, anything owned by turn detection, STT, or TTS — remove it as part
+of the change, and say what was removed and why. Do not leave it in because it is
+harmless: every dead line is clutter the model has to read past on every call. If the
+instruction had a real intent behind it, carry that intent to the component config
+(`references/defaults.md`) or, where possible, rewrite it as a text rule per the next
+paragraph.
+
 **The boundary is over the component, not its input or output.** The prompt can't
 change how TTS renders a string, but it fully controls *which* string TTS receives —
 so pronunciation is reachable by respelling. `"Never output digits; write numbers as
@@ -190,6 +200,10 @@ Check every script against these. They are not stylistic.
   `# Introduction` heading. Zero is a Voice Prompt with no script; two or more pastes
   the entire Intro body into the prompt again at every occurrence. See Writing
   conventions.
+- No instruction aimed at turn detection, STT, or TTS survives in any prompt the skill
+  touches — new or existing. "Ignore background noise", "wait two seconds", "speak
+  slowly" and their kin are removed on sight, not preserved. See Know what the prompt
+  can actually control.
 - Default pricing rule, unless the use case overrides it:
   `You can't discuss the price, only a licensed agent can do so.`
 - An Out of Office Intro exists, tagged `after_office_hours` — except for scheduling
