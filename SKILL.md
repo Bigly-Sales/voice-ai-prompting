@@ -186,6 +186,10 @@ Check every script against these. They are not stylistic.
   conventions.
 - Neither the persona nor the `who_you_are` variable names the bot — no `{bot_name}`
   and no hardcoded name. Role and character only. See Writing conventions.
+- `{intro}` appears in the Voice Prompt **exactly once**, on its own line under an
+  `# Introduction` heading. Zero is a Voice Prompt with no script; two or more pastes
+  the entire Intro body into the prompt again at every occurrence. See Writing
+  conventions.
 - Default pricing rule, unless the use case overrides it:
   `You can't discuss the price, only a licensed agent can do so.`
 - An Out of Office Intro exists, tagged `after_office_hours` — except for scheduling
@@ -221,6 +225,30 @@ that block: `This is {bot_name} with {company_name} on a recorded line` and
 `Can I please speak to {name}?` are both correct there. A second `{bot_name}` or
 `{company_name}` anywhere else — the persona, a rule, a rebuttal — is a mistake:
 it fragments the cache and repeats information the model already has.
+
+**`{intro}` is injected once and never referenced.** It is not a variable holding a
+name or a date — it is the whole Intro body, substituted in full at every place the
+token appears. One occurrence is the join between the two layers; a second one
+duplicates the entire script inside the prompt. So the Voice Prompt has exactly one
+`{intro}`, as a standalone block:
+
+```text
+# Introduction
+{intro}
+```
+
+Never write `{intro}` inside a sentence. Rules that need to point at the script point
+at its sections by name (`go back to the question you left in #Qualification Flow`,
+`proceed to #Transfer`), never at `{intro}`:
+
+```text
+WRONG:
+For the qualification questions, follow {intro}.
+Rebuttals are handled as described in {intro}.
+
+RIGHT:
+Rebuttals are handled in #Rebuttal.
+```
 
 **The persona never names the bot.** Not as `{bot_name}`, and not hardcoded. The
 name is already in the prompt through the opening sentence, so naming it again adds

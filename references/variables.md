@@ -50,7 +50,7 @@ Supplied by the platform, not by you.
 | Variable | Holds |
 | --- | --- |
 | `{date}` | Today's date at call time. Anything reasoning about "later today", scheduling, or "in the past" needs it in scope. |
-| `{intro}` | The selected Intro's `content_outbound` or `content_inbound`, substituted into the Voice Prompt. This is the join between the two layers — a Voice Prompt missing `{intro}` runs with no conversation script at all. |
+| `{intro}` | The selected Intro's `content_outbound` or `content_inbound`, substituted **in full** into the Voice Prompt. This is the join between the two layers — a Voice Prompt missing `{intro}` runs with no conversation script at all, and one with two occurrences carries the whole script twice. Exactly one, as a standalone `# Introduction` block; never inside a sentence. See `SKILL.md`, Writing conventions. |
 
 `{date}` is the one runtime value worth injecting deliberately: the Callback Rule and
 any ISO-8601 timestamp question are both wrong without it.
