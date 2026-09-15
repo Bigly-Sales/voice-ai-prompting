@@ -191,6 +191,9 @@ Check every script against these. They are not stylistic.
 - The YES path goes directly to Q1. No script asks permission to ask questions
   (`"Is it okay if I ask you a few questions?"`) — a transition sentence is allowed, a
   question that waits for consent is not. See Standard Intro structure.
+- Every question asks for one thing. No option lists, no appended reasons, no two
+  questions in one sentence — callers answer the first half and talk over the rest.
+  See Writing conventions.
 - Scheduling scripts must **not** list `transfer_call` at all, and must state
   explicitly that transfers are not available. `prompt_type` must be
   `meeting_scheduler`, not `transfer_call` — the enum has to agree with the script.
@@ -295,6 +298,29 @@ You are Tyler, a man in his early thirties working as a mortgage coordinator. ..
 
 Same for `who_you_are`: `You are a sales assistant`, never `You are Juan, a sales
 assistant`.
+
+**One question, one part.** Every question the bot asks — configured `{Qn}` text and
+inline asks alike — asks for exactly one thing and stops. No lists of options, no
+justification tacked on, no second question in the same breath. The reason is the
+medium: callers start answering as soon as they hear enough to answer, so on a
+two-part question they talk over the second half. TTS keeps playing text nobody is
+listening to, the turn gets tangled, and the caller feels interrupted by the bot.
+
+```text
+WRONG:
+"What are you looking for — windows, doors, or something else?"
+"What is your zip code? It's to help you better, and please spell it out."
+"What's your house address, do you live in Florida?"
+
+RIGHT:
+"Are you looking for windows?"
+"What's your zip code?"
+"What's your address?"
+```
+
+If a question genuinely needs two facts, it is two questions. If it needs options,
+ask a yes/no about the most likely one and let the flow branch. Keep every question as
+short as it can be and still be answered.
 
 **State the expected answer** in parentheses after every question. This is how the
 model knows it has collected enough to move on. It also belongs in the question's
