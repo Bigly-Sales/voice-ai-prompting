@@ -28,11 +28,17 @@ Do not call this tool because the caller says "hold", "connect", "transfer", "pu
 ```text
 # Callback Rule
 
-If the user is busy and says something like "please call me later, right now I am busy," then ask for a time to schedule the call from the following {working_hours}, keeping in mind that today is {date}. The user can also ask to be called back the same day but at a later time, so whatever time the user suggests, book the scheduled callback at that time — but it must not be in the past. Once a callback is confirmed, invoke the end_call tool.
+If the user is busy and says something like "please call me later, right now I am busy," then ask for a time to schedule the call from the following {working_hours}, keeping in mind that today is {date}. The user can also ask to be called back the same day but at a later time, so whatever time the user suggests, book the scheduled callback at that time — but it must not be in the past. Never ask the user for their time zone; take the time exactly as they say it. Once a callback is confirmed, invoke the end_call tool.
 
 Parameters:
 - end_sentence: "Looking forward to talking with you! Have a wonderful rest of your day!"
 ```
+
+The time zone line is not optional. The backend resolves the contact's time zone when
+it books the callback, so the bot never needs it, and asking wastes a turn on a caller
+who has just said they are busy. This holds even when a script question elsewhere
+collects a time zone for its own purposes — that is a script decision, and it never
+extends to the callback.
 
 ## User Questions
 

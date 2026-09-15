@@ -311,7 +311,8 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
   is answered, and never because the caller says "hold" / "connect" / "put me
   through." A guard on the tool, not an invocation of it — see The two layers.
 - **Callback Rule** — caller is busy, book a time within `{working_hours}`, never
-  in the past, then `end_call`.
+  in the past, then `end_call`. Never ask the caller's time zone — the backend
+  resolves it when it books the callback, so a script that asks is wrong.
 - **User Questions** — answer, then return to the exact question you left. Never
   skip a question without an answer.
 - **Language Rule** — English by default unless the use case says otherwise.
