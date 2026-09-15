@@ -188,6 +188,9 @@ Check every script against these. They are not stylistic.
 - The NO path of `# Initial Ask Handling After Opening Sentence` is the two-attempt
   push rule from Standard Intro structure, selling script or not, with its final
   `proceed to` pointing at the section that actually follows.
+- The YES path goes directly to Q1. No script asks permission to ask questions
+  (`"Is it okay if I ask you a few questions?"`) — a transition sentence is allowed, a
+  question that waits for consent is not. See Standard Intro structure.
 - Scheduling scripts must **not** list `transfer_call` at all, and must state
   explicitly that transfers are not available. `prompt_type` must be
   `meeting_scheduler`, not `transfer_call` — the enum has to agree with the script.
@@ -372,7 +375,12 @@ question — not an inline `Ask: "..."`.
 ```
 
 **Initial Ask Handling** branches on the caller's answer to the pitch. YES proceeds to
-the next section. NO is this push rule, on essentially every script — selling or not,
+the next section — straight into Q1, never through a permission question. The pitch
+was the ask; a YES to it is the consent. Writing `Ask: "Is it okay if I ask you a
+couple of questions?"` between the pitch and Q1 adds a turn, invites a second NO, and
+makes the bot sound unsure of itself. A one-line transition that is not a question is
+fine (`Say: "Great, let me see if you qualify." then immediately proceed to Q1`);
+anything that waits for an answer is not. NO is this push rule, on essentially every script — selling or not,
 the point is to keep the caller in the conversation long enough to qualify them or get
 the message across. It has proven itself in production:
 
