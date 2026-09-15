@@ -68,9 +68,10 @@ Contact attributes are also where question answers land — a configured questio
 to `contact.<field>` (see `platform-mcp.md`), so those fields become available to later
 prompts on the same contact.
 
-Inject each one **once**, in a single `# User Personal Information` section near the
-end of the prompt, and refer to it with `[]` everywhere else — this keeps the static
-prefix cacheable. See `architecture.md`.
+Inject each one **once**, in the `# General Rule` block that closes the Voice Prompt
+(verbatim in `global-rules.md`), and refer to it with `[]` everywhere else — this
+keeps the static prefix cacheable. See `architecture.md`. The opening sentence is the
+one exception: `Can I please speak to {name}?` is correct there.
 
 ## Questions
 

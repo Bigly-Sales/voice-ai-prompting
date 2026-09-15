@@ -147,8 +147,9 @@ them out of TTS output.
 the opening NO is now a stated convention, but there is still no example of the
 rebuttal content itself — what the bot should actually say on each attempt.
 
-**`# User Personal Information`** — [undocumented] · The section is mandated but its
-contents aren't specified, and no list of injectable contact attributes exists.
+**Injectable contact attributes** — [undocumented] · The `# General Rule` block now
+specifies the variable section, but no list of injectable contact attributes beyond
+`{name}` exists.
 
 **Multi-campaign tenants** — [undocumented] · Company variables are tenant-wide, so two
 campaigns needing different bot names or goals cannot both use `{bot_name}`.

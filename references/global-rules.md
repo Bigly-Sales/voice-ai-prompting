@@ -40,6 +40,10 @@ who has just said they are busy. This holds even when a script question elsewher
 collects a time zone for its own purposes — that is a script decision, and it never
 extends to the callback.
 
+**Placement:** this block goes at the very end of the Voice Prompt, directly above
+`# General Rule`. It is the only rule block that carries variables (`{working_hours}`,
+`{date}`), so putting it anywhere higher breaks the cacheable prefix at that point.
+
 ## User Questions
 
 The bot must always return to the exact point it left the script.
@@ -90,3 +94,31 @@ Intros (see Transfer Rule above).
 
 For scheduling scripts, omit `transfer_call` entirely and state in the prompt that
 transfers are not available.
+
+## General Rule
+
+The **last block in every Voice Prompt**, verbatim. This is the one place the company
+variables, the contact's name, and the date are injected; everywhere else in the prompt
+refers to them with `[]` or not at all.
+
+```text
+# General Rule
+Who you are: {who_you_are}
+Who you are calling: {who_you_are_calling}
+What is your goal: {what_is_your_goal}
+Company name: {company_name}
+Caller name: {name}
+Current date: {date}
+Pricing Rule: {pricing_rule}
+```
+
+The order of the Voice Prompt's tail is fixed: static rules, then the Callback Rule,
+then `# General Rule`. Everything that varies per contact or per call sits in those
+last two blocks, so the whole prompt above them is identical across calls and stays
+cached (see `architecture.md`).
+
+`{bot_name}` is not in this block on purpose. It is spoken in the flow's opening
+sentence (`This is {bot_name} with {company_name} on a recorded line`), which is the
+one place a variable may appear outside these two blocks. Injecting `{bot_name}` or
+`{company_name}` a second time anywhere — a persona, a rule, a rebuttal — is a
+mistake: it repeats what the model already has and fragments the cache.

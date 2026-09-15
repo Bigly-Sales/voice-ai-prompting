@@ -77,7 +77,8 @@ already there — including variables sitting empty and Intros you'd otherwise d
    written against them.
 2. Outbound Intro — objective, pickup handling, qualification flow, transfer or
    scheduling, rebuttals.
-3. Voice Prompt — persona, tools, and the standard rule blocks.
+3. Voice Prompt — persona, tools, the standard rule blocks, and closing with the
+   Callback Rule followed by the `# General Rule` block.
 4. Inbound Intro, if in scope — clone step 2, change who called whom.
 5. Callback Intro — clone step 2, acknowledge the requested callback. Tag
    `SCHEDULED_CALLBACK`.
@@ -178,6 +179,11 @@ Check every script against these. They are not stylistic.
 - Company variables define at minimum `bot_name`, `what_is_your_goal`, `company_name` —
   and none of the ones the script relies on may be left empty. See
   `references/variables.md`.
+- The Voice Prompt ends with the Callback Rule and then the `# General Rule` block
+  from `references/global-rules.md`, verbatim. No company variable, `{name}`, or
+  `{date}` appears in the Voice Prompt outside those two blocks — the opening
+  sentence of a flow is the only other place one may be spoken. See Writing
+  conventions.
 - Default pricing rule, unless the use case overrides it:
   `You can't discuss the price, only a licensed agent can do so.`
 - An Out of Office Intro exists, tagged `after_office_hours` — except for scheduling
@@ -198,10 +204,21 @@ or swapped without touching the rest.
 `"Hello [user first name]"` tells the model to look up a value it already has. For
 the standard set and which layer injects each, see `references/variables.md`.
 
-**Inject each contact attribute once.** Questions used once (`{Q1}`) can be
-injected inline. Contact attributes go in a single `# User Personal Information`
-section near the end and are referenced with `[]` elsewhere. Besides being cleaner,
-this protects prompt caching — see `references/architecture.md`.
+**Inject each variable once, in the `# General Rule` block.** Questions used once
+(`{Q1}`) are injected inline in the Intro. Every other variable — the company
+variables, the contact's `{name}`, `{date}` — is injected exactly once, in a
+`# General Rule` block that is the **last thing in the Voice Prompt**, and referenced
+with `[]` anywhere else. The verbatim block is in `references/global-rules.md`. The
+Callback Rule is the one other block allowed to carry variables (`{working_hours}`,
+`{date}`), and for the same reason it sits immediately before `# General Rule`.
+Everything above those two blocks is static text, which is what keeps the prompt's
+cacheable prefix long — see `references/architecture.md`.
+
+The opening sentence of a flow is the one place a variable may be spoken outside
+that block: `This is {bot_name} with {company_name} on a recorded line` and
+`Can I please speak to {name}?` are both correct there. A second `{bot_name}` or
+`{company_name}` anywhere else — the persona, a rule, a rebuttal — is a mistake:
+it fragments the cache and repeats information the model already has.
 
 **State the expected answer** in parentheses after every question. This is how the
 model knows it has collected enough to move on. It also belongs in the question's
@@ -318,6 +335,8 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 - **Language Rule** — English by default unless the use case says otherwise.
 - **Company Info** — 2–3 paragraphs for answering questions about the business.
   Include it even if you only have placeholder text to replace later.
+- **General Rule** — the single block where every variable is injected. Always the
+  last block in the Voice Prompt, with the Callback Rule directly above it.
 
 ## Edge cases worth handling explicitly
 
