@@ -184,6 +184,8 @@ Check every script against these. They are not stylistic.
   `{date}` appears in the Voice Prompt outside those two blocks — the opening
   sentence of a flow is the only other place one may be spoken. See Writing
   conventions.
+- Neither the persona nor the `who_you_are` variable names the bot — no `{bot_name}`
+  and no hardcoded name. Role and character only. See Writing conventions.
 - Default pricing rule, unless the use case overrides it:
   `You can't discuss the price, only a licensed agent can do so.`
 - An Out of Office Intro exists, tagged `after_office_hours` — except for scheduling
@@ -219,6 +221,26 @@ that block: `This is {bot_name} with {company_name} on a recorded line` and
 `Can I please speak to {name}?` are both correct there. A second `{bot_name}` or
 `{company_name}` anywhere else — the persona, a rule, a rebuttal — is a mistake:
 it fragments the cache and repeats information the model already has.
+
+**The persona never names the bot.** Not as `{bot_name}`, and not hardcoded. The
+name is already in the prompt through the opening sentence, so naming it again adds
+nothing and ties the persona to one campaign — a persona is meant to be reusable
+across scripts and bot names. This applies equally to the `# Persona` block and to
+the `who_you_are` company variable. Describe the role and character only:
+
+```text
+RIGHT:
+You are a man in his early thirties working as a mortgage coordinator. You are confident, direct, friendly and professional. You keep the call brisk and businesslike without ever sounding cold or rushed. You sound like a real person, never like a script. If you have to cover the same ground twice, rephrase it a new way - never repeat the same exact wording twice, even if the caller cut you off the first time.
+
+WRONG:
+You are {bot_name}, a man in his early thirties working as a mortgage coordinator. ...
+
+WRONG:
+You are Tyler, a man in his early thirties working as a mortgage coordinator. ...
+```
+
+Same for `who_you_are`: `You are a sales assistant`, never `You are Juan, a sales
+assistant`.
 
 **State the expected answer** in parentheses after every question. This is how the
 model knows it has collected enough to move on. It also belongs in the question's

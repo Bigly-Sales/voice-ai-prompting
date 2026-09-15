@@ -18,10 +18,10 @@ filling in. The list below is the set a live tenant actually exposes:
 
 | Variable | Holds |
 | --- | --- |
-| `{bot_name}` | The agent's first name, as spoken. |
+| `{bot_name}` | The agent's first name, as spoken. Used in the opening sentence only — never in the persona or `who_you_are`. |
 | `{company_name}` | The business the bot represents. |
 | `{what_is_your_goal}` | One-line statement of what the call is for. |
-| `{who_you_are}` | The persona — role, and relationship to the company. |
+| `{who_you_are}` | Role and relationship to the company (`You are a sales assistant`). Never carries the bot's name, as a variable or hardcoded. |
 | `{who_you_are_calling}` | Who is on the other end and why they're on the list. |
 | `{pricing_rule}` | The pricing restriction. |
 | `{additional_instructions}` | Free-text catch-all appended to the prompt. |
