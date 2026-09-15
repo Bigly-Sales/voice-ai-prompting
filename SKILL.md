@@ -165,6 +165,11 @@ Check every script against these. They are not stylistic.
   fallback the Intro overrides (see `references/defaults.md`), so an outbound script
   opening with a bare `"Can I please speak to {name}?"` carries the disclosure on the
   next turn, in the Intro's pitch. Inbound and OOO greet and disclose in one sentence.
+  This is a requirement on the **author**, satisfied by hardcoding the phrase into
+  that opening text. It is never written as a rule for the LLM — a `# Recording
+  Notice` block telling the model to "make sure to say it in your first turn" is
+  dead weight, because the phrase is already in the sentence the model reads out.
+  If a review finds such a rule, delete it and check the opening text instead.
 - At least **two questions**, even when one would do. This is a guard against the
   bot racing to a transfer on a single answer. The OOO Intro is the one exemption:
   it delivers a closed-office message and ends the call, so it carries no questions.
