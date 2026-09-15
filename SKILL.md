@@ -87,8 +87,8 @@ already there — including variables sitting empty and Intros you'd otherwise d
    written against them.
 2. Outbound Intro — objective, pickup handling, qualification flow, transfer or
    scheduling, rebuttals.
-3. Voice Prompt — persona, tools, the standard rule blocks, and closing with the
-   Callback Rule followed by the `# General Rule` block.
+3. Voice Prompt — persona, tools, the standard rule blocks, and closing with
+   `# Introduction`, the Callback Rule, and the `# General Rule` block, in that order.
 4. Inbound Intro, if in scope — clone step 2, change who called whom.
 5. Callback Intro — clone step 2, acknowledge the requested callback. Tag
    `SCHEDULED_CALLBACK`.
@@ -202,9 +202,9 @@ Check every script against these. They are not stylistic.
 - Neither the persona nor the `who_you_are` variable names the bot — no `{bot_name}`
   and no hardcoded name. Role and character only. See Writing conventions.
 - `{intro}` appears in the Voice Prompt **exactly once**, on its own line under an
-  `# Introduction` heading. Zero is a Voice Prompt with no script; two or more pastes
-  the entire Intro body into the prompt again at every occurrence. See Writing
-  conventions.
+  `# Introduction` heading placed directly above the Callback Rule. Zero is a Voice
+  Prompt with no script; two or more pastes the entire Intro body into the prompt
+  again at every occurrence. See Writing conventions.
 - No instruction aimed at turn detection, STT, or TTS survives in any prompt the skill
   touches — new or existing. "Ignore background noise", "wait two seconds", "speak
   slowly" and their kin are removed on sight, not preserved. See Know what the prompt
@@ -235,9 +235,11 @@ variables, the contact's `{name}`, `{date}` — is injected exactly once, in a
 `# General Rule` block that is the **last thing in the Voice Prompt**, and referenced
 with `[]` anywhere else. The verbatim block is in `references/global-rules.md`. The
 Callback Rule is the one other block allowed to carry variables (`{working_hours}`,
-`{date}`), and for the same reason it sits immediately before `# General Rule`.
-Everything above those two blocks is static text, which is what keeps the prompt's
-cacheable prefix long — see `references/architecture.md`.
+`{date}`), and for the same reason it sits immediately before `# General Rule`. The
+`# Introduction` block holding `{intro}` sits just above those two. So the tail of
+every Voice Prompt is, in order: `# Introduction`, Callback Rule, `# General Rule`.
+Everything above that tail is static text, which is what keeps the prompt's cacheable
+prefix long — see `references/architecture.md`.
 
 The opening sentence of a flow is the one place a variable may be spoken outside
 that block: `This is {bot_name} with {company_name} on a recorded line` and
@@ -249,7 +251,9 @@ it fragments the cache and repeats information the model already has.
 name or a date — it is the whole Intro body, substituted in full at every place the
 token appears. One occurrence is the join between the two layers; a second one
 duplicates the entire script inside the prompt. So the Voice Prompt has exactly one
-`{intro}`, as a standalone block:
+`{intro}`, as a standalone block near the end of the prompt — directly above the
+Callback Rule and `# General Rule`, since it varies per Intro and belongs in the
+dynamic tail with them:
 
 ```text
 # Introduction
@@ -405,7 +409,8 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 - **Company Info** — 2–3 paragraphs for answering questions about the business.
   Include it even if you only have placeholder text to replace later.
 - **General Rule** — the single block where every variable is injected. Always the
-  last block in the Voice Prompt, with the Callback Rule directly above it.
+  last block in the Voice Prompt, with the Callback Rule directly above it and
+  `# Introduction` above that.
 
 ## Edge cases worth handling explicitly
 

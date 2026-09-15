@@ -41,8 +41,9 @@ collects a time zone for its own purposes — that is a script decision, and it 
 extends to the callback.
 
 **Placement:** this block goes at the very end of the Voice Prompt, directly above
-`# General Rule`. It is the only rule block that carries variables (`{working_hours}`,
-`{date}`), so putting it anywhere higher breaks the cacheable prefix at that point.
+`# General Rule` and directly below `# Introduction`. It is the only rule block that
+carries variables (`{working_hours}`, `{date}`), so putting it anywhere higher breaks
+the cacheable prefix at that point.
 
 ## User Questions
 
@@ -112,10 +113,24 @@ Current date: {date}
 Pricing Rule: {pricing_rule}
 ```
 
-The order of the Voice Prompt's tail is fixed: static rules, then the Callback Rule,
-then `# General Rule`. Everything that varies per contact or per call sits in those
-last two blocks, so the whole prompt above them is identical across calls and stays
-cached (see `architecture.md`).
+The order of the Voice Prompt's tail is fixed:
+
+```text
+...static rules...
+
+# Introduction
+{intro}
+
+# Callback Rule
+...
+
+# General Rule
+...
+```
+
+Everything that varies — per Intro, per contact, per call — sits in those last three
+blocks, so the whole prompt above them is identical across calls and stays cached
+(see `architecture.md`).
 
 `{bot_name}` is not in this block on purpose. It is spoken in the flow's opening
 sentence (`This is {bot_name} with {company_name} on a recorded line`), which is the
