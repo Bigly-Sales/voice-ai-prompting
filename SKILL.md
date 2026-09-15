@@ -155,7 +155,8 @@ Check every script against these. They are not stylistic.
   opening with a bare `"Can I please speak to {name}?"` carries the disclosure on the
   next turn, in the Intro's pitch. Inbound and OOO greet and disclose in one sentence.
 - At least **two questions**, even when one would do. This is a guard against the
-  bot racing to a transfer on a single answer.
+  bot racing to a transfer on a single answer. The OOO Intro is the one exemption:
+  it delivers a closed-office message and ends the call, so it carries no questions.
 - Every phone number is full U.S. E.164 with the `+1` prefix: `+17075550123`.
 - Every tool the flow needs is listed in the Voice Prompt. A transfer flow without
   `transfer_call` listed fails silently.
