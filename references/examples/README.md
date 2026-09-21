@@ -1,6 +1,6 @@
 # Example Scripts
 
-Real production scripts. They predate parts of the guide and may contain errors —
+Production scripts with client names and phone numbers replaced. They predate parts of the guide and may contain errors —
 they show shape and phrasing, not rules. When the guide and an example disagree,
 the guide wins.
 
@@ -17,5 +17,6 @@ the guide wins.
    Intro, after-hours Intro.
 4. Add a row above.
 
-Keep the whole script, warts included. The errors are useful — they show what
+Keep the whole script, warts included, but replace client names, phone numbers,
+webhook ids, and any other identifying detail before committing. The errors are useful — they show what
 actually ships and what to watch for in review.

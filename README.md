@@ -4,22 +4,19 @@ A Claude Code skill for writing, reviewing, and debugging prompts for the Bigly
 Sales Voice AI platform — outbound and inbound phone scripts that qualify leads,
 transfer to a live agent, or schedule appointments.
 
-> **Private.** Contains live production transfer numbers and internal call
-> methodology. Do not make this repository public.
-
 ## Install
 
 Clone directly into your Claude Code skills directory. The repository *is* the
 skill — no build or copy step.
 
 ```bash
-git clone git@github.com:<org>/voice-ai-prompting.git ~/.claude/skills/voice-ai-prompting
+git clone https://github.com/lautaro-bigly/voice-ai-prompting.git ~/.claude/skills/voice-ai-prompting
 ```
 
 On Windows (PowerShell):
 
 ```powershell
-git clone git@github.com:<org>/voice-ai-prompting.git "$env:USERPROFILE\.claude\skills\voice-ai-prompting"
+git clone https://github.com/lautaro-bigly/voice-ai-prompting.git "$env:USERPROFILE\.claude\skills\voice-ai-prompting"
 ```
 
 Restart Claude Code. Verify with `/skills` — `voice-ai-prompting` should be listed.
@@ -38,7 +35,7 @@ references/
   global-rules.md                     verbatim Voice Prompt rule blocks
   variables.md                        standard {} variable set and injection points
   ooo-and-callback.md                 Out of Office and scheduled callback templates
-  examples/                           real production scripts, indexed in README.md
+  examples/                           anonymized production scripts, indexed in README.md
 ```
 
 `SKILL.md` is loaded in full every time the skill activates, so it holds only what

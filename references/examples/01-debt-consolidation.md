@@ -1,6 +1,7 @@
 # Example 01 — Debt Consolidation (Outbound Qualification → Live Transfer)
 
-> **Real production script.** It predates parts of the current guide and may
+> **Real production script, anonymized.** The client name and transfer numbers are
+> replaced with placeholders. It predates parts of the current guide and may
 > contain conventions this guide now supersedes, as well as outright errors (note
 > the typo `end_sentece`, and `#Monthly Savings Calculation` referencing a section
 > actually named `#Savings Calculation`). Its Voice Prompt also ends the wrong-number
