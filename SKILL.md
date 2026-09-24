@@ -63,7 +63,8 @@ script is not buildable without them:
 5. What disqualifies someone, and what the bot says when they don't qualify.
 6. Transfer destination number — transfer flows only.
 7. Business hours and time zone.
-8. Inbound, outbound, or both.
+8. Outbound, or inbound-only. An outbound script always gets its inbound side as well —
+   see Inbound vs outbound — so the only question is whether outbound is in scope.
 9. Language, if not English-only.
 
 **Every one of these is blocking.** If the request leaves one out, ask for it before
@@ -98,7 +99,9 @@ already there — including variables sitting empty and Intros you'd otherwise d
    scheduling, rebuttals.
 3. Voice Prompt — persona, tools, the standard rule blocks, and closing with
    `# Introduction`, the Callback Rule, and the `# General Rule` block, in that order.
-4. Inbound Intro, if in scope — clone step 2, change who called whom.
+4. Inbound side of the same Intro — required, never "if in scope". Fill
+   `content_inbound`, `first_inbound_sentence`, and `questions_inbound` on the Intro from
+   step 2, changing only who called whom.
 5. Callback Intro — clone step 2, acknowledge the requested callback. Tag
    `SCHEDULED_CALLBACK`.
 6. OOO prompt — unless the script only schedules. Tag `after_office_hours`.
@@ -234,6 +237,10 @@ Check every script against these. They are not stylistic.
 - An Out of Office Intro exists, tagged `after_office_hours` — except for scheduling
   scripts, where business hours are irrelevant.
 - A scheduled callback Intro exists, tagged `SCHEDULED_CALLBACK`.
+- Every outbound Intro — main script and callback alike — has its inbound side filled:
+  `content_inbound`, `first_inbound_sentence`, `questions_inbound`. The OOO Intro is the
+  one exemption, because it is inbound-only and has no outbound side to mirror. See
+  Inbound vs outbound.
 - Every question whose answer is needed later has an `attribute_type` and an
   `attribute_name`. Both are optional to the platform, so omitting them silently
   discards the answer rather than erroring.
@@ -472,8 +479,16 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 
 ## Inbound vs outbound
 
-Same flow, same logic, same rules. Clone the outbound Intro and change the opening
-sentence to reflect who called whom.
+**Every outbound Intro has an inbound counterpart. Always.** People call back the
+number that just called them — a missed call, a voicemail notification, a callback they
+asked for — and that return call selects the same Intro on its inbound side. An Intro
+with an empty inbound side answers that caller with no script. This is not a scope
+question for the user; it is part of building an outbound Intro, so never ask whether
+they want it and never deliver an outbound Intro without it. The one Intro exempt is
+the Out of Office one, which is inbound-only by design (`references/ooo-and-callback.md`).
+
+Same flow, same logic, same rules. Fill the inbound fields on the same Intro from the
+outbound ones and change the opening sentence to reflect who called whom.
 
 These are **Intro** openings, not the fallback sentences in the Voice Prompt
 Configuration:
