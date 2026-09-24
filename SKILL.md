@@ -66,7 +66,9 @@ script is not buildable without them:
 8. Inbound, outbound, or both.
 9. Language, if not English-only.
 
-**Derive everything else — don't ask.** Every setting in `references/defaults.md`;
+**Derive everything else — don't ask.** The value of every setting in
+`references/defaults.md` (you still ask whether to *apply* them — see Apply the
+recommended settings);
 every rule block in `references/global-rules.md`; the section layout; the default
 pricing rule; E.164 reformatting of any number given loosely (`707-555-0123` →
 `+17075550123`); and the fact that an OOO prompt and a callback Intro are required at
@@ -107,29 +109,34 @@ Run the hard-requirements list below against the result before calling it done. 
 MCP is unavailable, produce the same artifacts as text for the user to paste — the
 deliverable is identical either way.
 
-## Apply the config defaults
+## Apply the recommended settings
 
 The script is only half the deliverable. The component settings in
-`references/defaults.md` apply to every prompt and are never set automatically.
+`references/defaults.md` apply to every prompt and are never set automatically. Call
+them the **recommended settings** when talking to the user — that is what they are.
 
+This step is never skipped. A script delivered without it runs on whatever the tenant
+happened to have, which is the most common way a finished prompt ends up misconfigured.
 On every prompt task, new or existing, read the current config with
 `tenant_ai_voice_prompt` action `read` and compare it against `references/defaults.md`,
 which lists the MCP field name for each setting. (`tenant_ai_settings` is *not* this —
-it holds tenant plumbing like SIP and DNC thresholds.) Then:
+it holds tenant plumbing like SIP and DNC thresholds.) Then always tell the user where
+the config stands:
 
-- **Everything matches** — done. Ask nothing, write nothing, say nothing.
-- **Something differs** — never overwrite it silently. A different value may be
-  deliberate. List each difference (setting, current value, default) and ask whether
-  to apply the defaults. Apply only what the user approves — they may want to keep one
-  override and fix the rest. If they decline, drop it and don't ask again for that
-  prompt.
+- **Everything matches** — say in one line that the recommended settings are already
+  in place, and move on. Nothing to write.
+- **Something differs** — never overwrite it silently, and never leave it as it is
+  without asking. A different value may be deliberate. List each difference (setting,
+  current value, recommended value) and ask whether to apply the recommended settings.
+  Apply only what the user approves — they may want to keep one override and fix the
+  rest. If they decline, drop it and don't ask again for that prompt.
 
 `Maximum Call Duration` is a judgment call rather than a fixed value; count it as
 matching whenever it clears the 4-minute floor.
 
 After applying, report which values changed. If the MCP can't read or write the
 config, say so plainly and output the filled-in tables for the user to enter — never
-finish a prompt with the defaults silently unapplied.
+finish a prompt with the recommended settings silently unapplied.
 
 ## The two layers
 
