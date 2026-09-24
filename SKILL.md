@@ -66,6 +66,13 @@ script is not buildable without them:
 8. Inbound, outbound, or both.
 9. Language, if not English-only.
 
+**Every one of these is blocking.** If the request leaves one out, ask for it before
+building anything. Do not guess it, do not stand in a placeholder such as
+`+1XXXXXXXXXX` or `[transfer number here]`, and do not quietly build the script without
+the part that needs it. No transfer number on a transfer flow means you ask for the
+transfer number — not that you write an Intro with no `# Transfer` section. Ask for all
+the missing items in one message rather than one at a time.
+
 **Derive everything else — don't ask.** The value of every setting in
 `references/defaults.md` (you still ask whether to *apply* them — see Apply the
 recommended settings);
