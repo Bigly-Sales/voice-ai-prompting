@@ -17,9 +17,11 @@ for the full tag list, which includes cases this file doesn't cover
 
 ## Out of Office (OOO)
 
-Configure an OOO prompt for **almost every script**. The exception is **scheduling**
-scripts: they book appointments rather than transferring to a live call center, so
-business hours are irrelevant and no OOO prompt is needed.
+Configure an OOO prompt for **every transfer script**, and for no other kind. Working
+hours and the OOO prompt both exist for one reason: live agents answer the phone during
+some hours and not others. A script that does not transfer — scheduling, information,
+anything else — has no live agents, so business hours are irrelevant, no OOO prompt is
+needed, and working hours must never be set for it.
 
 ### Configuration
 

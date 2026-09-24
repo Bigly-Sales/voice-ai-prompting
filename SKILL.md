@@ -62,7 +62,9 @@ script is not buildable without them:
 4. The qualification questions, with the answer each must produce.
 5. What disqualifies someone, and what the bot says when they don't qualify.
 6. Transfer destination number — transfer flows only.
-7. Business hours and time zone.
+7. Business hours and time zone — transfer flows only. Working hours exist so the bot
+   knows when a live agent can pick up. With no transfers there is no one to pick up,
+   so do not ask for them and never set them.
 8. Outbound, or inbound-only. An outbound script always gets its inbound side as well —
    see Inbound vs outbound — so the only question is whether outbound is in scope.
 9. Language, if not English-only.
@@ -104,7 +106,7 @@ already there — including variables sitting empty and Intros you'd otherwise d
    step 2, changing only who called whom.
 5. Callback Intro — clone step 2, acknowledge the requested callback. Tag
    `SCHEDULED_CALLBACK`.
-6. OOO prompt — unless the script only schedules. Tag `after_office_hours`.
+6. OOO prompt — transfer flows only. Tag `after_office_hours`.
 7. Config, per the next section.
 8. `tenant_ai_call_context_preview` — assemble the real prompt without dialing, and
    confirm every `{variable}` resolved instead of reaching the LLM as literal braces.
@@ -234,8 +236,10 @@ Check every script against these. They are not stylistic.
   can actually control.
 - Default pricing rule, unless the use case overrides it:
   `You can't discuss the price, only a licensed agent can do so.`
-- An Out of Office Intro exists, tagged `after_office_hours` — except for scheduling
-  scripts, where business hours are irrelevant.
+- Working hours and an Out of Office Intro (tagged `after_office_hours`) exist on
+  transfer flows, and only there. Both describe when live agents answer the phone. A
+  script with no transfers — scheduling, information, anything else — has no live
+  agents, so it has no working hours and no OOO Intro. Never set working hours on it.
 - A scheduled callback Intro exists, tagged `SCHEDULED_CALLBACK`.
 - Every outbound Intro — main script and callback alike — has its inbound side filled:
   `content_inbound`, `first_inbound_sentence`, `questions_inbound`. The OOO Intro is the
