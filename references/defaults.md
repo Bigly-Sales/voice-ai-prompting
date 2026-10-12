@@ -62,13 +62,13 @@ whole call regardless of what is being said.
 
 | Setting     | MCP field                    | Default Value          |
 | ----------- | ---------------------------- | ---------------------- |
-| Type        | —                            | Azure                  |
-| Model       | `ai_large_language_model_id` | GPT 4.1 Mini (id `11`) |
+| Type        | —                            | OpenAI                 |
+| Model       | `ai_large_language_model_id` | GPT 4.1 Mini (id `10`) |
 | Temperature | `temperature`                | 0.7                    |
 | Top P       | `top_p`                      | 0.9                    |
 | Max Tokens  | `max_tokens`                 | 150                    |
 
-The catalog also carries GPT-5 Mini/Nano and Claude Sonnet 4.6. Azure GPT 4.1 Mini
+The catalog also carries GPT-5 Mini/Nano and Claude Sonnet 4.6. OpenAI GPT 4.1 Mini
 stays the default because the conventions in this skill — literal instructions, ALL
 CAPS branch keywords, explicit expected answers — are tuned for it. Changing model is a
 deliberate decision, not a default.
