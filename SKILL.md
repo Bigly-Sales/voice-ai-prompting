@@ -65,6 +65,12 @@ script is not buildable without them:
 7. Business hours and time zone.
 8. Inbound, outbound, or both.
 9. Language, if not English-only.
+10. What to do when an AI call assistant answers for the contact (Google Call Assist,
+    Apple and Samsung call screening): **handle it** — introduce yourself, wait through
+    the hold, continue when the person picks up — or **hang up immediately**. Both are
+    standard blocks in `references/global-rules.md`; the `end_call` tool stays as it is.
+    Which one is a business decision (lead reach versus screener minutes). Handle is the
+    usual answer for transfer flows.
 
 **Derive everything else — don't ask.** Every setting in `references/defaults.md`;
 every rule block in `references/global-rules.md`; the section layout; the default
@@ -87,13 +93,16 @@ already there — including variables sitting empty and Intros you'd otherwise d
    written against them.
 2. Outbound Intro — objective, pickup handling, qualification flow, transfer or
    scheduling, rebuttals.
-3. Voice Prompt — persona, tools, the standard rule blocks, and closing with
+3. Voice Prompt — persona, tools, the standard rule blocks (including the AI
+   Assistant / Call Screener setup chosen in question 10), and closing with
    `# Introduction`, the Callback Rule, and the `# General Rule` block, in that order.
 4. Inbound Intro, if in scope — clone step 2, change who called whom.
 5. Callback Intro — clone step 2, acknowledge the requested callback. Tag
    `SCHEDULED_CALLBACK`.
 6. OOO prompt — unless the script only schedules. Tag `after_office_hours`.
-7. Config, per the next section.
+7. Config, per the next section. The `end_call` tool description is not part of the
+   screener setup: the Voice Prompt block carries the behaviour on its own
+   (`references/global-rules.md`, What to expect).
 8. `tenant_ai_call_context_preview` — assemble the real prompt without dialing, and
    confirm every `{variable}` resolved instead of reaching the LLM as literal braces.
 
@@ -176,6 +185,9 @@ Check every script against these. They are not stylistic.
 - Every phone number is full U.S. E.164 with the `+1` prefix: `+17075550123`.
 - Every tool the flow needs is listed in the Voice Prompt. A transfer flow without
   `transfer_call` listed fails silently.
+- The Voice Prompt carries one of the two `# AI Assistant / Call Screener` setups from
+  `references/global-rules.md`, verbatim. The `end_call` tool description is left as
+  deployed; the block alone decides the behaviour.
 - `transfer_call` is listed in the Voice Prompt and invoked only in Intros. A Voice
   Prompt that invokes it is wrong whatever the number — see The two layers.
 - Every `end_call` that says goodbye passes the line as its `end_sentence` parameter.
@@ -434,6 +446,9 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 - **Transfer Rule (Priority)** — never transfer before every qualification question
   is answered, and never because the caller says "hold" / "connect" / "put me
   through." A guard on the tool, not an invocation of it — see The two layers.
+- **AI Assistant / Call Screener** — what the bot does when a call-screening assistant
+  answers for the contact. Two setups, handle or hang up immediately; one of them is
+  always present. The `end_call` tool description is not touched.
 - **Callback Rule** — caller is busy, book a time within `{working_hours}`, never
   in the past, then `end_call`. Never ask the caller's time zone — the backend
   resolves it when it books the callback, so a script that asks is wrong.
@@ -452,8 +467,10 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 - Distinguish a human gatekeeper / AI assistant from voicemail — they need
   different handling. Voicemail and IVR should `end_call` without speaking — an
   empty `end_sentence` and no message, since an unspecified one plays the tenant
-  default.
-- Wait patiently when someone says they're fetching the person.
+  default. The assistant case is the AI Assistant / Call Screener block; do not
+  improvise a rule for it.
+- Wait patiently when someone says they're fetching the person — the block's "Sure."
+  rule. Hold noise ("mm", "yeah", "sí") is never a yes.
 - Never say "end_call" out loud or narrate that the call is ending.
 
 ## Inbound vs outbound

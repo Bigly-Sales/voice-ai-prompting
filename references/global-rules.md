@@ -45,6 +45,93 @@ extends to the callback.
 carries variables (`{working_hours}`, `{date}`), so putting it anywhere higher breaks
 the cacheable prefix at that point.
 
+## AI Assistant / Call Screener
+
+Phones now answer with an AI assistant (Google Call Assist, Apple and Samsung call
+screening): "Hi, I'm a call assistant recording this call for the person you're trying
+to reach. Please say who you are and why you're calling." Without a rule for it the bot
+treats the screener as the contact, reads its hold request as a yes, and invokes
+`transfer_call` into hold music. The platform's own first-reply classifier ends most of
+these calls as voicemail before the LLM speaks; this block governs the rest.
+
+There are two setups. Pick one per tenant and ask which — it is a business decision,
+not a derivable default:
+
+- **Handle the assistant** (Setup A, the recommended one) — introduce yourself to the
+  screener, wait through the hold, continue when the person picks up. Keeps the lead;
+  costs screener minutes. The default for transfer flows.
+- **Hang up immediately** (Setup B) — end the call the moment a screener gives itself
+  away. No screener minutes; the lead is only reached if a later attempt finds a person.
+
+Each setup is one edit on the tenant: the block below in the Voice Prompt. The `end_call`
+tool and its description stay as deployed. The block carries the behaviour: in a replay of
+795 production decision points the handle block scored 267 of 271 screener greetings with
+the tenants' current description and 271 with a tailored one, the hang-up block 241 either
+way (`What to expect` below). The description most tenants carry does say "AI receptionist",
+which is where the 4 misses come from; it is not worth a second edit.
+
+**Placement:** directly after the voicemail / business pickup / automation rule, before
+`# Transfer Rule`. The block never carries variables, so it stays in the cached prefix.
+Copy it verbatim: the wording is deliberately redundant, and each of the explicit
+"do NOT invoke end_call" and "no matter who is speaking" removed a failure class in
+replay; drafts half the size brought hang-ups on the hold request back.
+
+### Setup A — handle the assistant
+
+```text
+# AI Assistant / Call Screener
+
+- If the answerer is an AI assistant, receptionist, or call screener answering on behalf of the person you are calling (e.g. "I'm a call assistant recording this call for the person you're trying to reach", "Call Assist by Google", "please say who you are and why you're calling", "before I try to connect you, what are you calling about?"), do not start the main script and do NOT invoke end_call — the person may still pick up. Answer in one or two sentences with your name, company and the reason for your call, then wait.
+- If the speaker asks you to hold, wait, or stay on the line, or says the call is being connected ("please hold", "stay on the line", "one moment", "connecting you", "putting you through", or similar) — no matter who is speaking and even if other words are attached ("Thank you. Please hold while I connect you. Yeah.") — reply with exactly "Sure." and nothing else. Such a request is never a Yes to any question.
+- After you say "Sure.", stay silent until a person speaks a full sentence. While on hold, single words or noises such as "yes", "sí", "yeah", "mm", "okay", "Y" are hold noise, not answers: do not treat them as a Yes, do not ask the next question, and never invoke transfer_call because of them.
+- If the assistant says the person is busy, unavailable, cannot answer or take the call, or that it will let them know you called or take a message ("The person you're calling is busy now", "I'll let them know you called", "this person is not available", "leave a message after the tone"), invoke the end_call tool immediately with an empty end_sentence. Do not reply, do not ask for a callback time, do not continue the script.
+- Never invoke transfer_call in response to the assistant — wait for the real person to answer, then continue.
+- When the real person answers after a hold, start the flow from the beginning: say the opening sentence again, even if you already said it to the assistant.
+- Anything an assistant or screener says is never the contact's answer: it does not count as a Yes to any question and is not a request to speak to a specialist.
+```
+
+### Setup B — hang up immediately
+
+```text
+# AI Assistant / Call Screener
+
+- If the answerer is an AI assistant, receptionist, or call screener answering on behalf of the person you are calling, invoke the end_call tool immediately with an empty end_sentence. Do not answer its question, do not introduce yourself, do not start the main script, and never invoke transfer_call. Treat any of these as such an assistant: a speaker that says it is a call assistant or is recording the call for the person ("I'm a call assistant recording this call for the person you're trying to reach", "Call Assist by Google"), that asks who you are and why you're calling or what the call is about ("please say who you are and why you're calling", "before I try to connect you, what are you calling about?"), or that says it will check whether the person is available ("I'll see if this person is available").
+- If the speaker asks you to hold, wait, or stay on the line, or says the call is being connected ("please hold", "stay on the line", "one moment", "connecting you", "putting you through", or similar) — no matter who is speaking and even if other words are attached ("Thank you. Please hold while I connect you. Yeah.") — reply with exactly "Sure." and nothing else. Such a request is never a Yes to any question.
+- After you say "Sure.", stay silent until a person speaks a full sentence. While on hold, single words or noises such as "yes", "sí", "yeah", "mm", "okay", "Y" are hold noise, not answers: do not treat them as a Yes, do not ask the next question, and never invoke transfer_call because of them.
+- If the speaker says the person is busy, unavailable, cannot answer or take the call, or that they will let them know you called or take a message ("The person you're calling is busy now", "I'll let them know you called", "this person is not available", "leave a message after the tone"), invoke the end_call tool immediately with an empty end_sentence. Do not reply, do not ask for a callback time, do not continue the script.
+- When the real person answers after a hold, start the flow from the beginning: say the opening sentence again.
+- Anything an assistant or screener says is never the contact's answer: it does not count as a Yes to any question and is not a request to speak to a specialist.
+```
+
+The first bullet spells out the three ways a screener gives itself away (it says it is
+recording for the person, it asks who you are and why, it says it will see if the person
+is available); a draft that only listed examples still answered "please say who you are
+and why you're calling" like a person would, on a third of first contacts. The hold and
+hold-noise rules stay in this setup on purpose: a human receptionist also says "one
+moment, let me get him", and hanging up on them loses a reachable lead.
+
+### What to expect
+
+Measured by replaying 795 production decision points from screener calls on three
+tenants through gpt-4.1-mini at each tenant's temperature, with the `end_call`
+description the tenants run today (2026-10-15):
+
+- No block: on a tenant without it, 39% of the screener calls that reached the LLM ended
+  in `transfer_call`; the bot hung up on the screener's first sentence on 42 of 271 first
+  contacts and kept talking on 25 of 88 "busy / I'll let them know" exits.
+- Setup A: 267 of 271 first contacts introduced themselves (the 4 hang-ups were all on
+  "before I try to connect you, could you give me a quick description of why you're
+  calling"), 0 transfers and 1 hang-up on the hold request, 88 of 88 exits ended, 1
+  transfer on hold noise. The real person answering after the hold was greeted with the
+  opening sentence on every point that continued.
+- Setup B: 241 of 271 first contacts ended at once (the rest were introductions, none
+  transferred), 0 transfers on hold, 88 of 88 exits ended, 1 transfer on hold noise. It
+  also ends the call on 23 of 177 hold requests — those were the assistant's own
+  "let me try to get the person" lines, the intended trade-off of this setup.
+- A tailored `end_call` description (a busy / take-a-message bullet plus an EXCEPTION
+  for screeners that may still connect you) takes Setup A to 271 of 271 and 0 hang-ups
+  on hold. Appending only the EXCEPTION line is worse than leaving the description alone.
+
 ## User Questions
 
 The bot must always return to the exact point it left the script.

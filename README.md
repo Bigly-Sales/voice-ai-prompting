@@ -32,7 +32,7 @@ references/
   platform-mcp.md                     MCP tool surface, write handshake, intro tags
   architecture.md                     component responsibilities, prompting limits, caching
   defaults.md                         default config tables and opening sentences
-  global-rules.md                     verbatim Voice Prompt rule blocks
+  global-rules.md                     verbatim Voice Prompt rule blocks, incl. the two AI-assistant setups
   variables.md                        standard {} variable set and injection points
   ooo-and-callback.md                 Out of Office and scheduled callback templates
   examples/                           anonymized production scripts, indexed in README.md
