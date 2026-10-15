@@ -107,30 +107,33 @@ doesn't otherwise cover, and are worth asking about on a mature account.
 }
 ```
 
-- `attribute_type` — `boolean`, `string`, or `number`.
+`attribute_type`, `attribute_name`, and `instruction` are **mandatory on every
+question**, outbound and inbound. Never leave one out.
+
+- `attribute_type` — `boolean`, `string`, `number`, or `list`.
 - `attribute_name` — the contact field the answer lands in (`contact.<field>`). This is
   what makes an answer available downstream; an inline `Ask: "..."` in the body stores
   nothing.
-- `instruction` — a real field, and it carries two different jobs. For a plain question
-  it states the expected answer (`"must get a yes, no or equivalent answer"`). For a
-  question that must normalize free speech it holds the mapping rule:
+- `instruction` — the question's **expected output**. Always exactly one of these
+  predefined values, never free text:
 
-```text
-Interpret the user's answer and map it to exactly one of these values:
-"Single Family"
-"Multi Family"
-"Apartment"
-```
+| `instruction` | Use for |
+| --- | --- |
+| `must get a yes, no or equivalent answer` | Yes/no questions |
+| `must get a number` | Amounts, counts |
+| `must get a date in format Y-m-d` | Dates |
+| `must get a zipcode` | Zip codes |
+| `must get an answer for state and state name should be in abbreviation not full name.` | U.S. state |
+| `must get an answer.` | Anything the others don't fit — names, addresses, a choice among options |
 
-```text
-Convert the user's input into a normalized ISO 8601 UTC timestamp (RFC 3339),
-formatted exactly as YYYY-MM-DDTHH:MM:SSZ, using UTC time with the Z suffix.
-```
+Older Intros carry free-text instructions in this field (enum mappings, ISO 8601
+conversions). Don't copy them. When editing such an Intro, flag each one and replace it
+with the closest predefined value; any normalization rule it held belongs in the body
+parenthetical.
 
-Because `instruction` exists as a field, the parenthetical convention in `SKILL.md`
-(`(You must receive a YES/NO answer.)`) is the *body-side* echo of it — the
-authoritative expected-answer rule belongs in `instruction`, and the body reference
-keeps the flow readable. Set both.
+The parenthetical convention in `SKILL.md` (`(You must receive a YES/NO answer.)`) is the
+*body-side* companion of `instruction`: the field carries the predefined expected output,
+and the parenthetical carries it in readable form plus anything more specific. Set both.
 
 ## Conversion path
 

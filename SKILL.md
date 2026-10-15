@@ -95,8 +95,8 @@ already there — including variables sitting empty and Intros you'd otherwise d
 
 **Then build, in this order.** Each step depends on the one before it:
 
-1. Questions first, with `attribute_type` and `instruction` — the flow's branches are
-   written against them.
+1. Questions first, each with `attribute_type`, `attribute_name`, and a predefined
+   expected output (`instruction`) — the flow's branches are written against them.
 2. Outbound Intro — objective, pickup handling, qualification flow, transfer or
    scheduling, rebuttals.
 3. Voice Prompt — persona, tools, the standard rule blocks, and closing with
@@ -245,9 +245,11 @@ Check every script against these. They are not stylistic.
   `content_inbound`, `first_inbound_sentence`, `questions_inbound`. The OOO Intro is the
   one exemption, because it is inbound-only and has no outbound side to mirror. See
   Inbound vs outbound.
-- Every question whose answer is needed later has an `attribute_type` and an
-  `attribute_name`. Both are optional to the platform, so omitting them silently
-  discards the answer rather than erroring.
+- Every question — outbound and inbound, on every Intro — has an `attribute_type`, an
+  `attribute_name`, and an expected output (`instruction`) that is one of the platform's
+  predefined values, never free text. All three are mandatory, with no exceptions: a
+  question missing any of them is not finished. The values are listed in
+  `references/platform-mcp.md`.
 
 ## Writing conventions
 
@@ -348,10 +350,11 @@ ask a yes/no about the most likely one and let the flow branch. Keep every quest
 short as it can be and still be answered.
 
 **State the expected answer** in parentheses after every question. This is how the
-model knows it has collected enough to move on. It also belongs in the question's
-`instruction` field, which is where the platform stores the authoritative rule and where
-any normalization (map to an enum, emit ISO 8601) has to go — the parenthetical in the
-body is the readable echo of it. Set both; see `references/platform-mcp.md`.
+model knows it has collected enough to move on. The question's `instruction` field — its
+expected output — is set as well, always to one of the predefined values in
+`references/platform-mcp.md`. Those values are generic, so anything more specific (map
+the answer to an enum, a date format) goes in the body parenthetical, never in
+`instruction`. Set both.
 
 ```text
 Ask Q1: "{Q1}"

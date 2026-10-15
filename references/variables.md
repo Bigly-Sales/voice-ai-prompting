@@ -80,6 +80,6 @@ Unlike contact attributes these are used once each, so inline injection is corre
 and there is no reason to collect them into a section.
 
 Only configured questions store structured answers, and each one carries its own
-`instruction` and `attribute_name` as structured fields rather than prompt prose — see
-`platform-mcp.md`. An inline `Ask: "..."` is fine for a conversational aside but
+`attribute_type`, `attribute_name`, and predefined expected output (`instruction`) as
+structured fields rather than prompt prose — all three mandatory, see `platform-mcp.md`. An inline `Ask: "..."` is fine for a conversational aside but
 captures nothing downstream.
