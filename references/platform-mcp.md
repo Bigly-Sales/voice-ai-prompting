@@ -126,6 +126,11 @@ question**, outbound and inbound. Never leave one out.
 | `must get an answer for state and state name should be in abbreviation not full name.` | U.S. state |
 | `must get an answer.` | Anything the others don't fit — names, addresses, a choice among options |
 
+**Demo exception.** If the user explicitly says they are building a demo, confirm it
+with them, then set every question's `instruction` to `must get an answer.` instead of
+picking per question. Never assume a demo without that statement. `attribute_type` and
+`attribute_name` are still required.
+
 Older Intros carry free-text instructions in this field (enum mappings, ISO 8601
 conversions). Don't copy them. When editing such an Intro, flag each one and replace it
 with the closest predefined value; any normalization rule it held belongs in the body

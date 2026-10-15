@@ -249,7 +249,10 @@ Check every script against these. They are not stylistic.
   `attribute_name`, and an expected output (`instruction`) that is one of the platform's
   predefined values, never free text. All three are mandatory, with no exceptions: a
   question missing any of them is not finished. The values are listed in
-  `references/platform-mcp.md`.
+  `references/platform-mcp.md`. **Demos** are the one variation: when the user
+  explicitly says they are building a demo — never inferred from fake data or a
+  placeholder company — confirm it with them first, then set every expected output to
+  `must get an answer.`. `attribute_type` and `attribute_name` stay mandatory.
 
 ## Writing conventions
 
