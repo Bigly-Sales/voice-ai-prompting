@@ -65,12 +65,9 @@ script is not buildable without them:
 7. Business hours and time zone.
 8. Inbound, outbound, or both.
 9. Language, if not English-only.
-10. What to do when an AI call assistant answers for the contact (Google Call Assist,
-    Apple and Samsung call screening): **handle it** — introduce yourself, wait through
-    the hold, continue when the person picks up — or **hang up immediately**. Both are
-    standard blocks in `references/global-rules.md`; the `end_call` tool stays as it is.
-    Which one is a business decision (lead reach versus screener minutes). Handle is the
-    usual answer for transfer flows.
+10. When an AI call assistant answers for the contact: **handle it** or **hang up
+    immediately** (`references/global-rules.md`, AI Assistant / Call Screener). A
+    business decision; handle is the usual answer for transfer flows.
 
 **Derive everything else — don't ask.** Every setting in `references/defaults.md`;
 every rule block in `references/global-rules.md`; the section layout; the default
@@ -93,15 +90,13 @@ already there — including variables sitting empty and Intros you'd otherwise d
    written against them.
 2. Outbound Intro — objective, pickup handling, qualification flow, transfer or
    scheduling, rebuttals.
-3. Voice Prompt — persona, tools, the standard rule blocks (including the AI
-   Assistant / Call Screener setup chosen in question 10), and closing with
+3. Voice Prompt — persona, tools, the standard rule blocks, and closing with
    `# Introduction`, the Callback Rule, and the `# General Rule` block, in that order.
 4. Inbound Intro, if in scope — clone step 2, change who called whom.
 5. Callback Intro — clone step 2, acknowledge the requested callback. Tag
    `SCHEDULED_CALLBACK`.
 6. OOO prompt — unless the script only schedules. Tag `after_office_hours`.
-7. Config, per the next section. The `end_call` tool description is not part of the
-   screener setup.
+7. Config, per the next section.
 8. `tenant_ai_call_context_preview` — assemble the real prompt without dialing, and
    confirm every `{variable}` resolved instead of reaching the LLM as literal braces.
 
@@ -466,10 +461,8 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 - Distinguish a human gatekeeper / AI assistant from voicemail — they need
   different handling. Voicemail and IVR should `end_call` without speaking — an
   empty `end_sentence` and no message, since an unspecified one plays the tenant
-  default. The assistant case is the AI Assistant / Call Screener block; do not
-  improvise a rule for it.
-- Wait patiently when someone says they're fetching the person — the block's "Sure."
-  rule. Hold noise ("mm", "yeah", "sí") is never a yes.
+  default.
+- Wait patiently when someone says they're fetching the person.
 - Never say "end_call" out loud or narrate that the call is ending.
 
 ## Inbound vs outbound

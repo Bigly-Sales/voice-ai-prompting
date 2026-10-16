@@ -145,7 +145,6 @@ out of the tool list entirely.
 
 - `end_call` — `description` (when to fire), `default_sentence`, and the description of
   its single runtime parameter, `end_sentence`.
-  The AI Assistant / Call Screener setup does not touch it.
 - `webhook_dispatcher` — `webhook_id`, `webhook_sentence`, and a description for each.
 
 `end_sentence` is the closing line the platform speaks before it hangs up. When the

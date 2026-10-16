@@ -47,28 +47,16 @@ the cacheable prefix at that point.
 
 ## AI Assistant / Call Screener
 
-Phones now answer with an AI assistant (Google Call Assist, Apple and Samsung call
-screening): "Hi, I'm a call assistant recording this call for the person you're trying
-to reach. Please say who you are and why you're calling." Without a rule for it the bot
-treats the screener as the contact, reads its hold request as a yes, and invokes
-`transfer_call` into hold music. The platform's own first-reply classifier ends most of
-these calls as voicemail before the LLM speaks; this block governs the rest.
+What the bot does when a call-screening assistant (Google Call Assist, Apple or Samsung
+call screening) answers for the contact. Two setups, one per tenant; ask which — it is a
+business decision:
 
-There are two setups. Pick one per tenant and ask which — it is a business decision,
-not a derivable default:
+- **Setup A — handle the assistant**: introduce yourself, wait through the hold, continue
+  when the person picks up. Recommended for transfer flows.
+- **Setup B — hang up immediately**: end the call as soon as a screener gives itself away.
 
-- **Handle the assistant** (Setup A, the recommended one) — introduce yourself to the
-  screener, wait through the hold, continue when the person picks up. Keeps the lead;
-  costs screener minutes. The default for transfer flows.
-- **Hang up immediately** (Setup B) — end the call the moment a screener gives itself
-  away. No screener minutes; the lead is only reached if a later attempt finds a person.
-
-Each setup is one edit on the tenant: the block below in the Voice Prompt. The `end_call`
-tool and its description stay as deployed.
-
-**Placement:** directly after the voicemail / business pickup / automation rule, before
-`# Transfer Rule`. The block never carries variables, so it stays in the cached prefix.
-Copy it verbatim.
+Paste one block verbatim, after the voicemail / automation rule and before
+`# Transfer Rule`. The `end_call` tool stays as deployed.
 
 ### Setup A — handle the assistant
 
