@@ -101,8 +101,7 @@ already there — including variables sitting empty and Intros you'd otherwise d
    `SCHEDULED_CALLBACK`.
 6. OOO prompt — unless the script only schedules. Tag `after_office_hours`.
 7. Config, per the next section. The `end_call` tool description is not part of the
-   screener setup: the Voice Prompt block carries the behaviour on its own
-   (`references/global-rules.md`, What to expect).
+   screener setup.
 8. `tenant_ai_call_context_preview` — assemble the real prompt without dialing, and
    confirm every `{variable}` resolved instead of reaching the LLM as literal braces.
 

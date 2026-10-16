@@ -64,17 +64,11 @@ not a derivable default:
   away. No screener minutes; the lead is only reached if a later attempt finds a person.
 
 Each setup is one edit on the tenant: the block below in the Voice Prompt. The `end_call`
-tool and its description stay as deployed. The block carries the behaviour: in a replay of
-795 production decision points the handle block scored 267 of 271 screener greetings with
-the tenants' current description and 271 with a tailored one, the hang-up block 241 either
-way (`What to expect` below). The description most tenants carry does say "AI receptionist",
-which is where the 4 misses come from; it is not worth a second edit.
+tool and its description stay as deployed.
 
 **Placement:** directly after the voicemail / business pickup / automation rule, before
 `# Transfer Rule`. The block never carries variables, so it stays in the cached prefix.
-Copy it verbatim: the wording is deliberately redundant, and each of the explicit
-"do NOT invoke end_call" and "no matter who is speaking" removed a failure class in
-replay; drafts half the size brought hang-ups on the hold request back.
+Copy it verbatim.
 
 ### Setup A — handle the assistant
 
@@ -103,34 +97,8 @@ replay; drafts half the size brought hang-ups on the hold request back.
 - Anything an assistant or screener says is never the contact's answer: it does not count as a Yes to any question and is not a request to speak to a specialist.
 ```
 
-The first bullet spells out the three ways a screener gives itself away (it says it is
-recording for the person, it asks who you are and why, it says it will see if the person
-is available); a draft that only listed examples still answered "please say who you are
-and why you're calling" like a person would, on a third of first contacts. The hold and
-hold-noise rules stay in this setup on purpose: a human receptionist also says "one
-moment, let me get him", and hanging up on them loses a reachable lead.
-
-### What to expect
-
-Measured by replaying 795 production decision points from screener calls on three
-tenants through gpt-4.1-mini at each tenant's temperature, with the `end_call`
-description the tenants run today (2026-10-15):
-
-- No block: on a tenant without it, 39% of the screener calls that reached the LLM ended
-  in `transfer_call`; the bot hung up on the screener's first sentence on 42 of 271 first
-  contacts and kept talking on 25 of 88 "busy / I'll let them know" exits.
-- Setup A: 267 of 271 first contacts introduced themselves (the 4 hang-ups were all on
-  "before I try to connect you, could you give me a quick description of why you're
-  calling"), 0 transfers and 1 hang-up on the hold request, 88 of 88 exits ended, 1
-  transfer on hold noise. The real person answering after the hold was greeted with the
-  opening sentence on every point that continued.
-- Setup B: 241 of 271 first contacts ended at once (the rest were introductions, none
-  transferred), 0 transfers on hold, 88 of 88 exits ended, 1 transfer on hold noise. It
-  also ends the call on 23 of 177 hold requests — those were the assistant's own
-  "let me try to get the person" lines, the intended trade-off of this setup.
-- A tailored `end_call` description (a busy / take-a-message bullet plus an EXCEPTION
-  for screeners that may still connect you) takes Setup A to 271 of 271 and 0 hang-ups
-  on hold. Appending only the EXCEPTION line is worse than leaving the description alone.
+The hold and hold-noise rules stay in this setup on purpose: a human receptionist also says
+"one moment, let me get him", and hanging up on them loses a reachable lead.
 
 ## User Questions
 
