@@ -82,7 +82,8 @@ the missing items in one message rather than one at a time.
 **Derive everything else — don't ask.** The value of every setting in
 `references/defaults.md` (you still ask whether to *apply* them — see Apply the
 recommended settings);
-every rule block in `references/global-rules.md`; the section layout; the default
+every rule block in `references/global-rules.md` (but which AI Assistant / Call
+Screener setup to use is item 10 above — ask it); the section layout; the default
 pricing rule; E.164 reformatting of any number given loosely (`707-555-0123` →
 `+17075550123`); and the fact that an OOO prompt and a callback Intro are required at
 all. Asking about these wastes the user's turn on a decision the skill already made.
