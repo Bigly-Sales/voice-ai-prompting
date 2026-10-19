@@ -20,8 +20,8 @@ and **only** the LLM. Instructions aimed at the other three silently do nothing:
 | Conversation flow, questions, business logic, wording | LLM | Yes |
 | When the bot decides the caller stopped talking, response delay | Turn detection (LiveKit) | No |
 | Ignoring background noise, transcription accuracy | STT (Parakeet) | No |
-| Voice, tone, pacing, speaking softly/slowly | TTS (Cartesia) | No |
-| How a given word comes out | TTS (Cartesia) | Only by respelling it |
+| Voice, tone, pacing, speaking softly/slowly | TTS (Fish Audio) | No |
+| How a given word comes out | TTS (Fish Audio) | Only by respelling it |
 
 So "wait two seconds before answering", "ignore background noise", and "speak in a
 soft, slow voice" are dead text. Fix those in the component config, not the prompt.
@@ -53,7 +53,7 @@ per tenant. The job is to turn a plain request ("we want to call our aged leads 
 transfer the interested ones") into the full set of prompts and config that the
 platform needs, and write them through that connection.
 
-**Ask only for what you cannot derive.** These nine things have no default, and a
+**Ask only for what you cannot derive.** These ten things have no default, and a
 script is not buildable without them:
 
 1. Company name, and 2–3 sentences on what the business does (becomes `# Company Info`).
@@ -82,7 +82,8 @@ the missing items in one message rather than one at a time.
 **Derive everything else — don't ask.** The value of every setting in
 `references/defaults.md` (you still ask whether to *apply* them — see Apply the
 recommended settings);
-every rule block in `references/global-rules.md`; the section layout; the default
+every rule block in `references/global-rules.md` (but which AI Assistant / Call
+Screener setup to use is item 10 above — ask it); the section layout; the default
 pricing rule; E.164 reformatting of any number given loosely (`707-555-0123` →
 `+17075550123`); and the fact that an OOO prompt and a callback Intro are required at
 all. Asking about these wastes the user's turn on a decision the skill already made.

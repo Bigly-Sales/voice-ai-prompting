@@ -26,7 +26,7 @@ key to send. Read the tool first — its response includes the catalog of valid
 | Setting                 | MCP field                 | Default Value     |
 | ----------------------- | ------------------------- | ----------------- |
 | Background Sound        | `background_audio_file`   | `CallCenterNoise` |
-| Background Sound Volume | `background_audio_volume` | 0.03              |
+| Background Sound Volume | `background_audio_volume` | 0.05              |
 
 ## Speech-to-Text (STT)
 
@@ -45,14 +45,18 @@ will say back.
 
 ## Text-to-Speech (TTS)
 
-| Setting  | MCP field        | Default Value                       |
-| -------- | ---------------- | ----------------------------------- |
-| Provider | —                | Cartesia                            |
-| Voice    | `ai_voice_id`    | Sierra - California Girl (id `106`) |
-| Language | `voice_language` | `en`                                |
-| Speed    | `voice_speed`    | 1                                   |
-| Volume   | `voice_volume`   | 1                                   |
-| Emotion  | `voice_emotion`  | `neutral`                           |
+| Setting  | MCP field        | Default Value             |
+| -------- | ---------------- | ------------------------- |
+| Provider | —                | Fish Audio                |
+| Voice    | `ai_voice_id`    | Coco - CCG (id `1259`)    |
+| Language | `voice_language` | `en`                      |
+| Speed    | `voice_speed`    | 1                         |
+| Volume   | `voice_volume`   | 1                         |
+| Emotion  | `voice_emotion`  | `neutral`                 |
+
+Fish Audio (`fishaudio` in `bigly://catalog/models`) is the only TTS provider. Cartesia
+is going out of service: never pick a Cartesia voice, even though the catalog still
+lists them, and a tenant still on one counts as differing from the recommended settings.
 
 `voice_volume` has a floor of 0.01 — it cannot be set to 0. `voice_emotion` accepts 58
 values; `neutral` is the default for a reason, since a fixed emotion applies to the
