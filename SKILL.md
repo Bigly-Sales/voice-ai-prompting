@@ -20,8 +20,8 @@ and **only** the LLM. Instructions aimed at the other three silently do nothing:
 | Conversation flow, questions, business logic, wording | LLM | Yes |
 | When the bot decides the caller stopped talking, response delay | Turn detection (LiveKit) | No |
 | Ignoring background noise, transcription accuracy | STT (Parakeet) | No |
-| Voice, tone, pacing, speaking softly/slowly | TTS (Cartesia) | No |
-| How a given word comes out | TTS (Cartesia) | Only by respelling it |
+| Voice, tone, pacing, speaking softly/slowly | TTS (Fish Audio) | No |
+| How a given word comes out | TTS (Fish Audio) | Only by respelling it |
 
 So "wait two seconds before answering", "ignore background noise", and "speak in a
 soft, slow voice" are dead text. Fix those in the component config, not the prompt.

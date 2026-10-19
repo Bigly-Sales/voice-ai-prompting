@@ -21,7 +21,7 @@ responsibility:
   LLM. (Parakeet.) You never prompt it directly, but its failure modes are worth
   knowing, because the prompt has to absorb them — see the STT note below.
 - **Text-to-Speech (TTS)** — converts the LLM's text into audio. Owns voice
-  characteristics: tone, pacing, pronunciation, speaking style. (Cartesia.)
+  characteristics: tone, pacing, pronunciation, speaking style. (Fish Audio.)
 - **Turn Detection** — decides when the user has finished speaking and when the AI
   should respond. (LiveKit.)
 
@@ -54,7 +54,7 @@ The LLM sits between STT and TTS, so it controls the text crossing both boundari
 even though it controls neither engine. Two consequences worth knowing, because both
 look like violations of the rule above:
 
-**TTS input — pronunciation is reachable by respelling.** You cannot ask Cartesia to
+**TTS input — pronunciation is reachable by respelling.** You cannot ask Fish Audio to
 pronounce something differently, but you choose the characters it reads. A script
 whose numbers come out wrong is fixed with a prompt rule:
 
