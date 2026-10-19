@@ -53,7 +53,7 @@ per tenant. The job is to turn a plain request ("we want to call our aged leads 
 transfer the interested ones") into the full set of prompts and config that the
 platform needs, and write them through that connection.
 
-**Ask only for what you cannot derive.** These nine things have no default, and a
+**Ask only for what you cannot derive.** These ten things have no default, and a
 script is not buildable without them:
 
 1. Company name, and 2–3 sentences on what the business does (becomes `# Company Info`).
