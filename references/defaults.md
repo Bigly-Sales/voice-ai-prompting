@@ -26,7 +26,7 @@ key to send. Read the tool first — its response includes the catalog of valid
 | Setting                 | MCP field                 | Default Value     |
 | ----------------------- | ------------------------- | ----------------- |
 | Background Sound        | `background_audio_file`   | `CallCenterNoise` |
-| Background Sound Volume | `background_audio_volume` | 0.03              |
+| Background Sound Volume | `background_audio_volume` | 0.05              |
 
 ## Speech-to-Text (STT)
 
