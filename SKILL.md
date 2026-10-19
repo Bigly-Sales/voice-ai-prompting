@@ -68,6 +68,9 @@ script is not buildable without them:
 8. Outbound, or inbound-only. An outbound script always gets its inbound side as well —
    see Inbound vs outbound — so the only question is whether outbound is in scope.
 9. Language, if not English-only.
+10. When an AI call assistant answers for the contact: **handle it** or **hang up
+    immediately** (`references/global-rules.md`, AI Assistant / Call Screener). A
+    business decision; handle is the usual answer for transfer flows.
 
 **Every one of these is blocking.** If the request leaves one out, ask for it before
 building anything. Do not guess it, do not stand in a placeholder such as
@@ -195,6 +198,9 @@ Check every script against these. They are not stylistic.
 - Every phone number is full U.S. E.164 with the `+1` prefix: `+17075550123`.
 - Every tool the flow needs is listed in the Voice Prompt. A transfer flow without
   `transfer_call` listed fails silently.
+- The Voice Prompt carries one of the two `# AI Assistant / Call Screener` setups from
+  `references/global-rules.md`, verbatim. The `end_call` tool description is left as
+  deployed; the block alone decides the behaviour.
 - `transfer_call` is listed in the Voice Prompt and invoked only in Intros. A Voice
   Prompt that invokes it is wrong whatever the number — see The two layers.
 - Every `end_call` that says goodbye passes the line as its `end_sentence` parameter.
@@ -465,6 +471,9 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 - **Transfer Rule (Priority)** — never transfer before every qualification question
   is answered, and never because the caller says "hold" / "connect" / "put me
   through." A guard on the tool, not an invocation of it — see The two layers.
+- **AI Assistant / Call Screener** — what the bot does when a call-screening assistant
+  answers for the contact. Two setups, handle or hang up immediately; one of them is
+  always present. The `end_call` tool description is not touched.
 - **Callback Rule** — caller is busy, book a time within `{working_hours}`, never
   in the past, then `end_call`. Never ask the caller's time zone — the backend
   resolves it when it books the callback, so a script that asks is wrong.
