@@ -102,6 +102,13 @@ but the MCP has no calendar tool: it can't create, list or read calendars. The c
 has to be created in the Bigly app and its UUID handed over, and nothing checks that a
 value points at a real calendar — a typo is accepted silently.
 
+**OOO appointments on a `transfer_call` tenant** — [unverified] · The OOO Intro offers an
+appointment with no booking tool; post-call processing is believed to tag the contact
+`MEETING_BOOKED` and put it on the AI calendar. The skill leaves `prompt_type` at
+`transfer_call` and adds no tool to the Voice Prompt. Lautaro is testing this on a test
+tenant (2026-10-26). If appointments don't land, revisit `prompt_type`
+(`meeting_scheduler`?) and the tool list in `ooo-and-callback.md` and `SKILL.md`.
+
 **Call caps and dialing filters** — [undocumented] · `max_ai_call_per_day` / `_week` /
 `_month`, `verify_number_before_call` (blocks landlines), `allowed_zip_codes`,
 `default_zip_code`.

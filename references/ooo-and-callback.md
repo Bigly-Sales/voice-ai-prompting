@@ -23,58 +23,91 @@ some hours and not others. A script that does not transfer — scheduling, infor
 anything else — has no live agents, so business hours are irrelevant, no OOO prompt is
 needed, and working hours must never be set for it.
 
+### What it does
+
+A caller outside business hours gets the **same qualifying flow** as during business
+hours. Only the ending changes: there is no live agent to transfer to, so a caller who
+qualifies is offered an **appointment**, and an agent reaches them during working hours.
+
+The OOO Intro never tells the caller the office is closed, never asks them to call back,
+and never offers a callback. An appointment is not a callback — the Callback Rule in the
+Voice Prompt is for a caller who is busy, and still applies here on its own terms.
+
+There is no booking tool. The bot offers the appointment and confirms a day and time;
+post-call processing tags the contact `MEETING_BOOKED` and puts the appointment on the
+tenant's AI calendar. See `GAPS.md` — this is unverified on a `transfer_call` tenant.
+
+### Calendar prerequisite — the user's job
+
+The appointment lands on the calendar selected for AI meetings. If there is none, it has
+nowhere to go. **The skill cannot set this up**: the MCP can't create or list calendars.
+Tell the user plainly that they have to create and configure it themselves, in the Bigly
+app, before the OOO Intro goes live:
+
+1. **Calendars → Availability → Add availability**, and configure the calendar.
+2. **AI tab → Configure → Calender For AI Meetings**, and pick that calendar.
+
+Make sure they understand this is their step, not one the skill took. Once they say it's
+done, read `ai_calender_uuid` with `tenant_ai_settings` — it is `null` until a calendar
+is picked.
+
 ### Configuration
 
 OOO is for **inbound calls outside business hours only**.
 
 - Leave the **Outbound** section empty (`content_outbound`, `first_outbound_sentence`).
-- Configure only the **Inbound** section (`content_inbound`, `first_inbound_sentence`).
+- Configure the **Inbound** section (`content_inbound`, `first_inbound_sentence`,
+  `questions_inbound`). The questions are the main Intro's `questions_inbound`, with the
+  same `attribute_type`, `attribute_name` and expected output.
 - Set `tag` to `after_office_hours`.
 - **Never set `inbound_number`.** It stays empty under every circumstance. A number
   bound to the OOO Intro makes every call to that number get the OOO prompt, inside
-  working hours too — callers are told the office is closed while agents are waiting.
+  working hours too — callers are offered an appointment while agents are waiting.
   The `after_office_hours` tag alone is what selects it, outside business hours.
+- `prompt_type` stays `transfer_call`. The OOO appointment does not make the tenant a
+  scheduling script — pending the test noted in `GAPS.md`.
 
 If an existing OOO Intro has an `inbound_number`, clear it whenever you touch the
 tenant, whatever the task — without asking whether to. It is a workflow-breaking
 misconfiguration, not a choice. The removal still shows in the `preview_update` diff
 like any other field.
 
-The inbound opening sentence must clearly say the office is closed, and — like every
-other flow — must carry the recording disclosure:
+The inbound opening sentence is the standard inbound one. It carries the recording
+disclosure and says nothing about the office being closed:
 
 ```text
-Thanks for calling {company_name}. This is {bot_name} on a recorded line. Our office is currently closed, but you can reach us during our regular business hours, and we'll be happy to assist you.
+Thank you for calling {company_name}. This is {bot_name} on a recorded line. How can I help you today?
 ```
-
-Wording can vary, but it must always tell the caller the office is closed, invite
-them to call back during business hours, and include **"on a recorded line."** An
-after-hours call is recorded like any other, so the disclosure is not optional here.
 
 ### Default OOO body
 
-Unless the use case requires different behavior:
+Clone the main Intro's inbound body — Objective, Initial Ask Handling, Qualification
+Flow, FAQs, Rebuttal — and change only this:
+
+- The Objective says the goal is an appointment with a specialist, not a transfer.
+- `# Transfer` is replaced by `# Appointment` below, and every `proceed to #Transfer`
+  points at `#Appointment`.
 
 ```text
-Objective:
-To advise the user that the call center is currently closed and that they should call back during business hours. After providing this information, invoke the "end_call" tool. Never say "end_call" or explicitly mention that the call is being ended.
+# Appointment
 
-Who you are:
-{who_you_are}
+Transfers are not available on this call. Never invoke the transfer_call tool.
 
-Who you are calling:
-{who_you_are_calling}
+Say: "Great, I'd like to set up an appointment so one of our specialists can reach out to you."
 
-Company name:
-{company_name}
+Ask: "What day works best for you?"
+(You must receive a day within [working hours], not in the past.)
 
-Current date:
-{date}
+Ask: "What time works best for you that day?"
+(You must receive a time within [working hours]. Never ask for the time zone; take the time exactly as the user says it.)
 
-[RULES]
+Repeat the day and time back and ask: "Does that work for you?"
 
-Say:
-"The following are our working hours: {working_hours}. Please let me know when you would like us to call back."
+If YES or EQUIVALENT INTENT, invoke the end_call tool. Parameters:
+-end_sentence:"Perfect, you're all set. One of our specialists will reach out to you then. Have a great rest of your day!"
+If NO or EQUIVALENT INTENT, ask again for the day.
+If the user doesn't want an appointment, invoke the end_call tool. Parameters:
+-end_sentence:"No problem at all. Thanks for calling, and have a great rest of your day!"
 ```
 
 ---

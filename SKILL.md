@@ -110,7 +110,9 @@ already there — including variables sitting empty and Intros you'd otherwise d
    step 2, changing only who called whom.
 5. Callback Intro — clone step 2, acknowledge the requested callback. Tag
    `SCHEDULED_CALLBACK`.
-6. OOO prompt — transfer flows only. Tag `after_office_hours`.
+6. OOO prompt — transfer flows only. Tag `after_office_hours`. The main inbound
+   flow, ending in an appointment instead of a transfer. Tell the user they must
+   create and pick the AI meetings calendar themselves (`references/ooo-and-callback.md`).
 7. Config, per the next section.
 8. `tenant_ai_call_context_preview` — assemble the real prompt without dialing, and
    confirm every `{variable}` resolved instead of reaching the LLM as literal braces.
@@ -194,8 +196,8 @@ Check every script against these. They are not stylistic.
   dead weight, because the phrase is already in the sentence the model reads out.
   If a review finds such a rule, delete it and check the opening text instead.
 - At least **two questions**, even when one would do. This is a guard against the
-  bot racing to a transfer on a single answer. The OOO Intro is the one exemption:
-  it delivers a closed-office message and ends the call, so it carries no questions.
+  bot racing to a transfer on a single answer. The OOO Intro carries the main
+  Intro's questions, so it is no exemption.
 - Every phone number is full U.S. E.164 with the `+1` prefix: `+17075550123`.
 - Every tool the flow needs is listed in the Voice Prompt. A transfer flow without
   `transfer_call` listed fails silently.
@@ -250,6 +252,10 @@ Check every script against these. They are not stylistic.
 - The OOO Intro never has an `inbound_number`. A bound number serves the OOO prompt on
   every call to it, in working hours too. If one is set, clear it without asking. See
   `references/ooo-and-callback.md`.
+- The OOO Intro qualifies like the main one and offers an appointment, never a
+  callback, and never says the office is closed. It needs an AI meetings calendar the
+  user creates and picks themselves — the skill can't. `prompt_type` stays
+  `transfer_call` (unverified, see `GAPS.md`).
 - A scheduled callback Intro exists, tagged `SCHEDULED_CALLBACK`.
 - Every outbound Intro — main script and callback alike — has its inbound side filled:
   `content_inbound`, `first_inbound_sentence`, `questions_inbound`. The OOO Intro is the
