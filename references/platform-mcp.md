@@ -88,7 +88,8 @@ they are ordinary Intros with a tag, not a separate feature:
 | `SMS_CALLBACK` | Callback requested over SMS |
 
 Custom tag strings are accepted too. `inbound_number` binds an Intro to a specific
-inbound number.
+inbound number. Never set it on the `after_office_hours` Intro: the binding wins over
+working hours, so every call to that number gets the OOO prompt (`ooo-and-callback.md`).
 
 So "create an OOO prompt" means: create an Intro tagged `after_office_hours`. Two of
 these tags — `TRANSFERRED_DROPPED` and `MEETING_BOOKED` — are cases the written guide

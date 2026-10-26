@@ -30,6 +30,15 @@ OOO is for **inbound calls outside business hours only**.
 - Leave the **Outbound** section empty (`content_outbound`, `first_outbound_sentence`).
 - Configure only the **Inbound** section (`content_inbound`, `first_inbound_sentence`).
 - Set `tag` to `after_office_hours`.
+- **Never set `inbound_number`.** It stays empty under every circumstance. A number
+  bound to the OOO Intro makes every call to that number get the OOO prompt, inside
+  working hours too — callers are told the office is closed while agents are waiting.
+  The `after_office_hours` tag alone is what selects it, outside business hours.
+
+If an existing OOO Intro has an `inbound_number`, clear it whenever you touch the
+tenant, whatever the task — without asking whether to. It is a workflow-breaking
+misconfiguration, not a choice. The removal still shows in the `preview_update` diff
+like any other field.
 
 The inbound opening sentence must clearly say the office is closed, and — like every
 other flow — must carry the recording disclosure:

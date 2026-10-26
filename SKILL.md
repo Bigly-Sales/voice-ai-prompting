@@ -247,6 +247,9 @@ Check every script against these. They are not stylistic.
   transfer flows, and only there. Both describe when live agents answer the phone. A
   script with no transfers — scheduling, information, anything else — has no live
   agents, so it has no working hours and no OOO Intro. Never set working hours on it.
+- The OOO Intro never has an `inbound_number`. A bound number serves the OOO prompt on
+  every call to it, in working hours too. If one is set, clear it without asking. See
+  `references/ooo-and-callback.md`.
 - A scheduled callback Intro exists, tagged `SCHEDULED_CALLBACK`.
 - Every outbound Intro — main script and callback alike — has its inbound side filled:
   `content_inbound`, `first_inbound_sentence`, `questions_inbound`. The OOO Intro is the
