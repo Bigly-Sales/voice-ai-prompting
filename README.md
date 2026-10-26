@@ -10,13 +10,13 @@ Clone directly into your Claude Code skills directory. The repository *is* the
 skill — no build or copy step.
 
 ```bash
-git clone https://github.com/lautaro-bigly/voice-ai-prompting.git ~/.claude/skills/voice-ai-prompting
+git clone https://github.com/Bigly-Sales/voice-ai-prompting.git ~/.claude/skills/voice-ai-prompting
 ```
 
 On Windows (PowerShell):
 
 ```powershell
-git clone https://github.com/lautaro-bigly/voice-ai-prompting.git "$env:USERPROFILE\.claude\skills\voice-ai-prompting"
+git clone https://github.com/Bigly-Sales/voice-ai-prompting.git "$env:USERPROFILE\.claude\skills\voice-ai-prompting"
 ```
 
 Restart Claude Code. Verify with `/skills` — `voice-ai-prompting` should be listed.
