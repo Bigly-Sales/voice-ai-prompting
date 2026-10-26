@@ -97,6 +97,10 @@ earns, so this is prompt-adjacent, not pure ops.
 scheduling scripts. Both `ai_calender_uuid` and `timezone` were **null** on a tenant that
 books meetings — worth understanding before writing another scheduling script, since a
 null timezone and an ISO-8601 question are a bad combination.
+`ai_calender_uuid` is writable through `tenant_ai_settings` as a free string (no enum),
+but the MCP has no calendar tool: it can't create, list or read calendars. The calendar
+has to be created in the Bigly app and its UUID handed over, and nothing checks that a
+value points at a real calendar — a typo is accepted silently.
 
 **Call caps and dialing filters** — [undocumented] · `max_ai_call_per_day` / `_week` /
 `_month`, `verify_number_before_call` (blocks landlines), `allowed_zip_codes`,
