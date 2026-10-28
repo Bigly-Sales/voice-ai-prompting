@@ -484,6 +484,8 @@ Copy these into the Voice Prompt of essentially every script. Verbatim text is i
 - **AI Assistant / Call Screener** — what the bot does when a call-screening assistant
   answers for the contact. Two setups, handle or hang up immediately; one of them is
   always present. The `end_call` tool description is not touched.
+- **AI Disclosure (Priority)** — asked whether it is a recording, a robot or an AI, the
+  bot says it is an AI assistant for the company, over any scripted identity answer.
 - **Callback Rule** — caller is busy, book a time within `{working_hours}`, never
   in the past, then `end_call`. Never ask the caller's time zone — the backend
   resolves it when it books the callback, so a script that asks is wrong.
