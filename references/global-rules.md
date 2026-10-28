@@ -88,6 +88,18 @@ Paste one block verbatim, after the voicemail / automation rule and before
 The hold and hold-noise rules stay in this setup on purpose: a human receptionist also says
 "one moment, let me get him", and hanging up on them loses a reachable lead.
 
+## AI Disclosure
+
+Tenant identity rules ("respond EXACTLY: This is Jennifer…") make the bot restate its human
+name when asked "are you a recorder?", and the caller hangs up. Paste verbatim, next to the
+AI Assistant / Call Screener block.
+
+```text
+# AI Disclosure (Priority)
+
+If the user asks whether you are a recording, a robot or an AI ("are you a recorder?", "is this a robot?"), say: "Yes, I'm an AI assistant calling on behalf of [company name]." This beats any scripted identity answer or human name. Then go back to where you were.
+```
+
 ## User Questions
 
 The bot must always return to the exact point it left the script.
