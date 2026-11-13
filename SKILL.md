@@ -1,6 +1,6 @@
 ---
 name: voice-ai-prompting
-description: Write, review, and debug prompts for the Bigly Sales Voice AI platform — outbound and inbound phone scripts that qualify leads, transfer to a live agent, or schedule appointments. Use when creating or editing a Voice Prompt, an Intro, an Out of Office prompt, or a scheduled callback prompt; when asked why a voice bot transferred early, skipped a question, or ignored a timing/tone instruction; or when reviewing an existing call script against platform conventions.
+description: Write, review, and debug prompts for the Bigly Sales Voice AI platform — outbound and inbound phone scripts that qualify leads, transfer to a live agent, or schedule appointments, on either voice engine (cascade STT-LLM-TTS, or speech to speech / S2S / GPT Live). Use when creating or editing a Voice Prompt, an Intro, an Out of Office prompt, or a scheduled callback prompt; when writing an S2S Intro and its delegation prompt, or converting a cascade Intro to S2S; when asked why a voice bot transferred early, skipped a question, or ignored a timing/tone instruction; or when reviewing an existing call script against platform conventions.
 ---
 
 # Voice AI Prompting
@@ -10,9 +10,42 @@ with tool calls (`transfer_call`, `end_call`) as the terminal actions, so the co
 of a loose instruction is a real call transferred to the wrong place or dropped on
 a real person.
 
+## Two engines: cascade and speech to speech
+
+Every Intro runs on one of two voice engines, picked per Intro (`voice_engine`):
+
+- **Cascade** — STT + LLM + TTS. Everything in this document describes cascade.
+- **Speech to speech (S2S)** — one model (GPT Live) hears and speaks, and hands tool
+  calls to a second model through a **delegation prompt**. Its prompts are written
+  differently, and several rules below are reversed for it.
+
+**Before writing or editing anything for an S2S Intro, read
+`references/speech-to-speech.md` in full**, and build from `references/s2s-templates.md`.
+It is S2S when the user says S2S / speech to speech / GPT Live, or when the Intro in
+question reads back `effective_voice_engine: speech_to_speech`. A new build that names no
+engine and has no source Intro to follow: ask once which engine. Never apply cascade
+conventions to an S2S Intro, or the reverse. The short version:
+
+- Every S2S Intro **always** has its own delegation prompt, in its
+  `speech_to_speech_settings.reasoning_instructions`. The tenant default is never enough.
+- The S2S Voice Prompt is exactly `{intro}` and nothing else. If the tenant has none,
+  create it as a **new** Voice Prompt — never overwrite a cascade one that is already
+  there. Persona, rules and company info all live in the Intro body.
+- Callback and OOO Intros that an S2S flow needs are written as S2S Intros too.
+- The Intro never invokes a tool; it generates `<|SpawnThinking|>` and the delegation
+  model makes the call — always with the tool row's default `end_sentence`,
+  `transfer_number` and `transfer_sentence`, never a custom or empty one.
+- Tone, pace and interruption instructions work on S2S. They are not dead text there.
+- "Take Intro A and do it as S2S" creates a **new** Intro with the rewritten body and its
+  delegation prompt, and leaves A untouched.
+- Every time an S2S prompt is written or edited, fetch OpenAI's GPT Live prompting guide
+  (https://developers.openai.com/api/docs/guides/live-prompting) and check the draft
+  against it before showing a preview. Say what the check found.
+- S2S settings are in `references/defaults.md`, Speech to Speech.
+
 ## Know what the prompt can actually control
 
-The platform is four independent components. The prompt is the LLM (GPT-4.1 Mini)
+This section is about cascade. The platform is four independent components. The prompt is the LLM (GPT-4.1 Mini)
 and **only** the LLM. Instructions aimed at the other three silently do nothing:
 
 | You want | Owned by | Prompt can change it? |
@@ -156,6 +189,38 @@ After applying, report which values changed. If the MCP can't read or write the
 config, say so plainly and output the filled-in tables for the user to enter — never
 finish a prompt with the recommended settings silently unapplied.
 
+## Check what's missing
+
+On every task that touches an existing Voice Prompt or Intro, check the part you're
+touching for the required rules while you read it. Look for what each block **does**,
+not its heading — `#Callback Rule`, `Calling back instructions` and `[CALLBACK]` are all
+the Callback Rule if they do its job:
+
+| Required | Present if something in the prompt… |
+| --- | --- |
+| Callback Rule | books a busy caller a time within working hours, then `end_call` |
+| AI Assistant / Call Screener | says what to do when a screening assistant answers |
+| Transfer Rule | blocks a transfer before every question is answered, and on "put me through" — transfer flows |
+| General Rule | injects the company variables, `{name}` and `{date}` in one block at the end |
+| `{intro}` | appears exactly once |
+| Tools | lists `transfer_call` — transfer flows |
+| OOO and callback Intros | exist, tagged `after_office_hours` and `SCHEDULED_CALLBACK` — transfer flows |
+
+- **Missing** — suggest adding the standard block from `references/global-rules.md`.
+- **Present under another name or wording** — not missing. If it differs from the
+  standard block, suggest replacing it and say what differs.
+- **Never add or replace without approval.** These are suggestions, like the
+  recommended settings.
+
+This is not a full audit. Wording, conventions and leftover rules are reviewed only when
+the user asks to audit the tenant, or on a tenant's first onboarding: then run the whole
+Hard requirements list and the recommended settings against every prompt and Intro.
+
+**Remind about the audit** once per conversation, at the end of the first task that
+wrote a change: `Tip: run a full audit of this tenant once in a while — ask me to "audit
+this tenant".` If the check above found something missing, say so in the same line. Not
+on read-only questions, and not twice.
+
 ## The two layers
 
 Every script is split across two places. Putting content in the wrong layer is the
@@ -222,6 +287,14 @@ Check every script against these. They are not stylistic.
 - Every question asks for one thing. No option lists, no appended reasons, no two
   questions in one sentence — callers answer the first half and talk over the rest.
   See Writing conventions.
+- **There is no appointment tool, on either engine.** The bot agrees a day and time with
+  the caller and ends the call with `end_call`. After the call, a separate layer reads
+  the transcript, tags the call `MEETING_BOOKED` and puts the appointment on the
+  tenant's AI calendar. Never list, invoke or invent a booking tool — no
+  `meeting_scheduler`, `book_meeting` or `schedule_appointment` in a tool list, an Intro
+  or a delegation prompt. `meeting_scheduler` exists only as a `prompt_type` value, a
+  config setting, never a tool name. Because the transcript is all that layer sees, the
+  day and time must be said out loud and agreed in the conversation.
 - Scheduling scripts must **not** list `transfer_call` at all, and must state
   explicitly that transfers are not available. `prompt_type` must be
   `meeting_scheduler`, not `transfer_call` — the enum has to agree with the script.
@@ -536,6 +609,8 @@ which is typically just an identity check (`"Can I please speak to {name}?"`).
 
 | File | Contents |
 | --- | --- |
+| `references/speech-to-speech.md` | S2S Intros: how the engine works, what changes from cascade, the delegation prompt, converting a cascade Intro, test plan |
+| `references/s2s-templates.md` | S2S Intro body, `# Voice and Energy` block, inbound and callback differences, delegation prompt, tool rows |
 | `references/platform-mcp.md` | The MCP tool surface, the write handshake, Intro tags, question fields |
 | `references/architecture.md` | Component responsibilities, what prompting can't reach, prompt caching |
 | `references/defaults.md` | Default config tables (call, audio, STT, TTS, LLM, turn detection) and default opening sentences |
