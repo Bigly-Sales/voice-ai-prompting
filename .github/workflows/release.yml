@@ -1,0 +1,53 @@
+# Cuts a release of the skill: tags main as vX.Y.Z and publishes a GitHub release
+# with notes generated from the pull requests merged since the last one.
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Which part of the version to raise
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: tag and release
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write  # create the tag and the release
+    steps:
+      - name: Tag main and publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUMP: ${{ inputs.bump }}
+        run: |
+          set -euo pipefail
+          last=$(gh api "repos/$GITHUB_REPOSITORY/tags" --paginate --jq '.[].name' \
+            | { grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || true; } | sort -V | tail -n1)
+          if [ -n "$last" ]; then
+            ahead=$(gh api "repos/$GITHUB_REPOSITORY/compare/$last...$GITHUB_SHA" --jq '.ahead_by')
+            if [ "$ahead" = "0" ]; then
+              echo "::error::main has nothing new since $last"
+              exit 1
+            fi
+          fi
+          IFS=. read -r major minor patch <<< "${last:-v0.0.0}"
+          major=${major#v}
+          case "$BUMP" in
+            major) next="v$((major + 1)).0.0" ;;
+            minor) next="v$major.$((minor + 1)).0" ;;
+            *) next="v$major.$minor.$((patch + 1))" ;;
+          esac
+          gh release create "$next" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "$next" --generate-notes
+          echo "Released $next (was ${last:-nothing})" >> "$GITHUB_STEP_SUMMARY"
