@@ -21,7 +21,24 @@ git clone https://github.com/Bigly-Sales/voice-ai-prompting.git "$env:USERPROFIL
 
 Restart Claude Code. Verify with `/skills` — `voice-ai-prompting` should be listed.
 
-To pick up changes: `git pull` in that directory.
+To pick up changes: `git pull` in that directory. `main` can be ahead of the last
+release; to stay on a released version, check out its tag, for example
+`git checkout v0.1.0`.
+
+## Releases
+
+A release is a tag `vX.Y.Z` on `main` with a GitHub release next to it. The tag is the
+version; no file in the repository holds it. The plugin in `biglysales-claude-plugins`
+takes the latest release, so a merged change reaches plugin users only after a release.
+
+To cut one: **Actions → release → Run workflow** on `main`, and pick what to raise:
+
+- `patch` — wording fixes, a new example, a clearer rule.
+- `minor` — a new rule or reference file, or a rule that changes what the bot does.
+- `major` — the skill is reorganized, or prompts written with the old version need a rewrite.
+
+The workflow tags the current `main`, and writes the release notes from the pull
+requests merged since the last release. It fails when `main` has nothing new.
 
 ## Layout
 
