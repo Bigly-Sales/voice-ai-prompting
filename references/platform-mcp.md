@@ -79,6 +79,12 @@ back to the voice assistant's) and `speech_to_speech_settings`. `list` and `read
 `effective_voice_engine` — check it before editing any Intro, because the two engines
 are written differently. The delegation prompt of an S2S Intro is
 `speech_to_speech_settings.reasoning_instructions`; send only the keys being changed.
+When `engine_source` is `assistant` (the Intro's `voice_engine` is null), calls run on the
+assistant's settings, so editing the Intro's `speech_to_speech_settings` alone changes
+nothing. To change this Intro only, send `voice_engine: "speech_to_speech"` in the same
+write: the Intro's settings then start from the assistant's, so the rest of the effective
+settings carry over. To change every Intro that inherits, edit the assistant's settings
+with `tenant_ai_voice_prompt_update` instead — ask which one the user means.
 `tenant_ai_call_context_preview` shows the engine a call would run on under
 `pipeline_config.engine`. See `speech-to-speech.md`.
 

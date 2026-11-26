@@ -14,7 +14,7 @@ read or edited has `effective_voice_engine: speech_to_speech`.
 | Part | Model | Job |
 | --- | --- | --- |
 | Voice model | `gpt-live-1` | Hears and speaks. Its prompt is the Intro body, because the Voice Prompt is only `{intro}` |
-| Delegation model | `gpt-6-luna` | Woken when the voice model emits `<|SpawnThinking|>`. Reads the conversation, calls the tools, returns a short status |
+| Delegation model | `gpt-6-luna` | Woken when the voice model emits `<\|SpawnThinking\|>`. Reads the conversation, calls the tools, returns a short status |
 | Tool audio | TTS outside the S2S engine | Speaks the tool's sentence. The tool row's default is pre-cached and plays instantly |
 
 Flow: caller ↔ voice model → `<|SpawnThinking|>` → delegation model → tool with its
@@ -72,7 +72,7 @@ Everything in `SKILL.md` still applies unless this table overrides it.
 | Voice Prompt holds persona, tools and the rule blocks; `{intro}` once under `# Introduction` | Its own Voice Prompt, **exactly** `{intro}` and nothing else, kept alongside the cascade one. Persona, rules, company info, callbacks and language all live in the Intro body |
 | Variables injected once in the Voice Prompt's `# General Rule` | Injected in the Intro: `{bot_name}` and `{company_name}` in the first line, the rest in a closing `# Who you are calling` block |
 | The persona never names the bot | The Intro opens with `You are {bot_name}, …` |
-| `invoke the end_call tool. Parameters: -end_sentence:"…"` | The Intro never says "invoke", "delegate" or "say nothing". It says "end the call" / "transfer" / "send the link", and the Delegation policy says when to generate `<|SpawnThinking|>` |
+| `invoke the end_call tool. Parameters: -end_sentence:"…"` | The Intro never says "invoke", "delegate" or "say nothing". It says "end the call" / "transfer" / "send the link", and the Delegation policy says when to generate `<\|SpawnThinking\|>` |
 | A custom `end_sentence` per ending; empty for voicemail, IVR, wrong number | **Always the tool row's default sentence.** Never empty, never custom, never translated, never with the caller's name |
 | `transfer_number` and `transfer_sentence` written in the Intro's `# Transfer` | They are the `transfer_call` tool row's defaults, spelled out in the delegation prompt. The Intro's `# Transfer` only says when |
 | Script lines are spoken as written | Quoted lines are points to make, in the model's own words. The only fixed words are the recording notice. Verbatim only if the user asks for it |
@@ -271,7 +271,7 @@ lives there. Then map every piece:
 | Voice Prompt rule blocks — Transfer Rule, Callback Rule, AI Assistant / Call Screener, AI Disclosure, User Questions, Language Rule, pricing | Rewritten into the body: `# Absolute Rules`, `# Callbacks`, `# Call Handling`, `# Voice and Energy`, `# Language` |
 | `# Company Info` and `# General Rule` | `# Company Info` and `# Who you are calling` at the end of the body |
 | `# Objective`, `# Initial Ask Handling`, `# Qualification Flow`, `# Rebuttal`, FAQs | Same flow, same order, same branches. Quoted lines become points to make; `Ask Q1: "{Q1}"` becomes `Q1, find out: "{Q1}"` |
-| Every `invoke the end_call tool` | "end the call" in the body; the condition goes in `Generate <|SpawnThinking|> when` and in the delegation prompt's `# End call` |
+| Every `invoke the end_call tool` | "end the call" in the body; the condition goes in `Generate <\|SpawnThinking\|> when` and in the delegation prompt's `# End call` |
 | Each custom `end_sentence` | Dropped. If the line carried information (why they don't qualify), the bot says it as its own turn first, then the call ends on the default — and the delegation prompt says "after <Bot> explained…" |
 | Empty `end_sentence` for voicemail, IVR, wrong number | The default sentence, like every other ending |
 | `# Transfer` with `transfer_number` and `transfer_sentence` | `# Transfer` keeps only the condition. Number and sentence become the `transfer_call` row's defaults and are spelled out in the delegation prompt |
@@ -293,7 +293,11 @@ Things to check while mapping, and raise before writing:
 - **A's callback and OOO Intros.** Converting the main Intro leaves them on cascade, and
   they keep working there. B needs its own S2S callback Intro, and an S2S OOO Intro on a
   transfer flow — write them as new S2S Intros in the same pass, each with its own
-  delegation prompt, and leave the cascade ones untouched.
+  delegation prompt, and leave the cascade ones untouched. Write them **without the tag**:
+  the platform picks the first Intro carrying `SCHEDULED_CALLBACK` or
+  `after_office_hours`, with no engine filter, so two Intros with the same tag means an
+  arbitrary one runs. The tags move from the cascade Intros to the S2S ones when the user
+  switches over, together with the inbound number — say so, and ask before retagging.
 
 Title B after A with the engine in the name (`<A's title> - S2S`) unless the user gives
 one. Then follow the Build order from step 4.
