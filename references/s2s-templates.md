@@ -208,7 +208,8 @@ You never read a script. Every line in quotes in this prompt is the idea to get 
 
 | Section | Inbound change |
 | --- | --- |
-| `Generate <|SpawnThinking|> when` | "…or the call is a sales call" replaces the wrong-number part; drop the voicemail line. Transfer flows add: existing customer / has an appointment / asks for someone by name |
+| `Generate <\|SpawnThinking\|> when` | "…or the call is a sales call" replaces the wrong-number part; drop the voicemail line. Transfer flows add: existing customer / has an appointment / asks for someone by name |
+| `Do not generate <\|SpawnThinking\|> when` | Transfer flows: the "hold, connect, transfer, put me through" line excludes those three direct-transfer cases |
 | `# Absolute Rules` | Write the inbound direct-transfer exception inside the first rule (transfer flows) |
 | `# Opening` | The caller speaks first and the configured first sentence usually doesn't play: greet them yourself, in the start language. Thank them for calling {company_name}, say who you are, the recording notice, ask how you can help. If a greeting was already spoken on your behalf, don't repeat it. If they already said why they're calling, go to `# Initial Ask` |
 | `# Initial Ask` (new) | YES or unclear → short context, then Q1 · another on-topic reason → answer, then Q1 · not interested → push, two max · sales call → end the call · unrelated → `# Off-Topic Requests` |
@@ -249,12 +250,12 @@ Languages: <the call is in X / in X or Y>. <Bot> always starts in <START languag
 
 # Cached audio
 end_call must ALWAYS be called with end_sentence: "<END DEFAULT>" so the pre-generated audio plays instantly. Every ending, without exception, in every language, voicemail, disqualified callers and abusive callers included. Never pass an empty end_sentence. Never write your own sentence, never translate it, never add to it, and never add the caller's name.
-<transfer_call must ALWAYS be called with transfer_number: "<+1…>" and transfer_sentence: "<TRANSFER DEFAULT>".>
+<transfer_call must ALWAYS be called with transfer_number: "<+1…>"<bilingual: the number for the call's language, per # Transfer> and transfer_sentence: "<TRANSFER DEFAULT>".>
 <webhook_dispatcher must ALWAYS be called with webhook_id: "<id>" and message: "<WEBHOOK DEFAULT>".>
 <No transfer: "There is no transfer on this line; never call transfer_call.">
 
 # No action
-If no task below applies, call no tool and return exactly: "No backend action needed; continue the conversation." This is guidance for <Bot>, never spoken. It applies to: any answer to a question (<examples>); an unclear or missing answer (<Bot> asks again); "hold", "connect", "transfer", "put me through", "<send it, per language>", asking for a person, or a <rate> question before <last question> is answered; a "no" or "not interested" while <Bot> still has a push left (two per call); "I'm busy" or "call me later" with no day and time (<Bot> asks for one); casual swearing not aimed at <Bot> ("<examples per language>"); a language switch, a mixed answer, or a few words in another language; <tenant-specific explanations in progress>; the first request unrelated to <offer> when it is not a joke (<Bot> redirects once). Questions about <Company>, <the offer>, <their situation> are on topic.
+If no task below applies, call no tool and return exactly: "No backend action needed; continue the conversation." This is guidance for <Bot>, never spoken. It applies to: any answer to a question (<examples>); an unclear or missing answer (<Bot> asks again); "hold", "connect", "transfer", "put me through", "<send it, per language>", asking for a person, or a <rate> question before <last question> is answered<inbound transfer flows: except an existing customer, someone with an appointment, or a caller asking for a person by name — those go to # Transfer>; a "no" or "not interested" while <Bot> still has a push left (two per call); "I'm busy" or "call me later" with no day and time (<Bot> asks for one); casual swearing not aimed at <Bot> ("<examples per language>"); a language switch, a mixed answer, or a few words in another language; <tenant-specific explanations in progress>; the first request unrelated to <offer> when it is not a joke (<Bot> redirects once). Questions about <Company>, <the offer>, <their situation> are on topic.
 
 # Qualification
 <Q1 …, Q2 …, Qn …, what counts as an answer for each.> <Fails / disqualifications and what <Bot> says before the call ends.> A question counts only when answered or explicitly declined.
@@ -335,5 +336,9 @@ language, and state in them when the tool may fire, matching the Intro.
 ```
 
 Per-language transfer numbers: the row keeps one default number; the delegation prompt
-names the other language's number explicitly and forbids mixing them. The transfer
-sentence stays the single cached default.
+names the other language's number explicitly and forbids mixing them. The row's two
+"always the default number" phrases name the mapping instead, so they don't contradict
+the delegation prompt: the `description` says "ALWAYS use the transfer_number for the
+call's language", and `transfer_number_description` says "<+1 A> for <language A> calls,
+<+1 B> for <language B> calls. Never use any other number." The transfer sentence stays
+the single cached default.

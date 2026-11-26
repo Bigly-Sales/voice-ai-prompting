@@ -97,7 +97,10 @@ script is not buildable without them:
 6. Transfer destination number — transfer flows only.
 7. Business hours and time zone — transfer flows only. Working hours exist so the bot
    knows when a live agent can pick up. With no transfers there is no one to pick up,
-   so do not ask for them and never set them.
+   so do not ask for them and never set them. Callbacks still get a window: with hours
+   unset, `{working_hours}` in the Callback Rule resolves to the platform default
+   (Mon–Fri 08:00–20:45), so a scheduling-only flow books callbacks in that window. If the
+   user names different callback hours, write them into the Callback Rule text instead.
 8. Outbound, or inbound-only. An outbound script always gets its inbound side as well —
    see Inbound vs outbound — so the only question is whether outbound is in scope.
 9. Language, if not English-only.
@@ -191,7 +194,7 @@ finish a prompt with the recommended settings silently unapplied.
 
 ## Check what's missing
 
-On every task that touches an existing Voice Prompt or Intro, check the part you're
+On every task that touches an existing cascade Voice Prompt or Intro, check the part you're
 touching for the required rules while you read it. Look for what each block **does**,
 not its heading — `#Callback Rule`, `Calling back instructions` and `[CALLBACK]` are all
 the Callback Rule if they do its job:
@@ -211,6 +214,9 @@ the Callback Rule if they do its job:
   standard block, suggest replacing it and say what differs.
 - **Never add or replace without approval.** These are suggestions, like the
   recommended settings.
+
+This check is cascade only. An S2S Voice Prompt is exactly `{intro}` and must not get
+these blocks; S2S Intros are checked against `references/speech-to-speech.md`.
 
 This is not a full audit. Wording, conventions and leftover rules are reviewed only when
 the user asks to audit the tenant, or on a tenant's first onboarding: then run the whole
